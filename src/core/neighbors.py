@@ -7,11 +7,13 @@ Allowed moves (spec):
    per the course QnA),
 3. rotate a package 90 degrees about x, y or z.
 """
+import random
+from collections.abc import Iterator
 from dataclasses import dataclass, replace
 
 from src.core.geometry import box
 from src.core.models import Problem
-from src.core.orientation import extents
+from src.core.orientation import AXES, extents
 from src.core.orientation import rotate as rotate_orientation
 from src.core.state import State, take_out
 
@@ -76,3 +78,69 @@ def candidate_positions(problem: Problem, state: State, i: int) -> list[tuple[in
         (x, y, z) for x, y, z in points
         if x + dx <= truck.w and y + dy <= truck.l and z + dz <= truck.h
     )
+
+
+def random_position(problem: Problem, state: State, i: int,
+                    rng: random.Random) -> tuple[int, int, int] | None:
+    """Half the time an extreme point, otherwise a uniform in-bounds corner.
+    None when package i does not fit in the truck in its orientation."""
+    if rng.random() < 0.5:
+        candidates = candidate_positions(problem, state, i)
+        if candidates:
+            return rng.choice(candidates)
+    truck = problem.truck
+    dx, dy, dz = extents(problem.packages[i], state[i].orientation)
+    if dx > truck.w or dy > truck.l or dz > truck.h:
+        return None
+    return (rng.randint(0, truck.w - dx), rng.randint(0, truck.l - dy),
+            rng.randint(0, truck.h - dz))
+
+
+def random_neighbor(problem: Problem, state: State,
+                    rng: random.Random) -> tuple[State, Move]:
+    """One random successor (stochastic HC, SA, GA mutation).
+
+    The move type is uniform among move/rotate/swap. For "move", an inside
+    package goes out with probability 0.2, otherwise to a random_position.
+    """
+    n = len(state)
+    kind = rng.choice(("move", "rotate", "swap") if n >= 2 else ("move", "rotate"))
+    if kind == "rotate":
+        i, axis = rng.randrange(n), rng.choice(AXES)
+        return rotate(state, i, axis), Move("rotate", i, axis=axis)
+    if kind == "swap":
+        i, j = rng.sample(range(n), 2)
+        return swap(state, i, j), Move("swap", i, j=j)
+    i = rng.randrange(n)
+    if state[i].in_truck and rng.random() < 0.2:
+        target = OUTSIDE
+    else:
+        target = random_position(problem, state, i, rng)
+    return move(state, i, target), Move("move", i, target=target)
+
+
+def sample_neighbors(problem: Problem, state: State, k: int,
+                     rng: random.Random) -> list[tuple[State, Move]]:
+    """k random successors, for a practical steepest-ascent variant."""
+    return [random_neighbor(problem, state, rng) for _ in range(k)]
+
+
+def all_neighbors(problem: Problem, state: State) -> Iterator[tuple[State, Move]]:
+    """Every successor, as in the slides' steepest ascent: all rotations, all
+    swaps that change something, and every move out of the truck or to an
+    extreme point. Slow on big instances (thousands of neighbors)."""
+    n = len(state)
+    for i in range(n):
+        for axis in AXES:
+            yield rotate(state, i, axis), Move("rotate", i, axis=axis)
+    for i in range(n):
+        for j in range(i + 1, n):
+            if state[i].in_truck or state[j].in_truck:
+                yield swap(state, i, j), Move("swap", i, j=j)
+    for i in range(n):
+        if state[i].in_truck:
+            yield move(state, i, OUTSIDE), Move("move", i, target=OUTSIDE)
+        current = (state[i].x, state[i].y, state[i].z) if state[i].in_truck else None
+        for target in candidate_positions(problem, state, i):
+            if target != current:
+                yield move(state, i, target), Move("move", i, target=target)

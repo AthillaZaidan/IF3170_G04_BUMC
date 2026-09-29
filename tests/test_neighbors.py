@@ -1,4 +1,16 @@
-from src.core.neighbors import OUTSIDE, candidate_positions, move, rotate, swap
+import random
+
+from src.core.initial import random_state
+from src.core.neighbors import (
+    OUTSIDE,
+    all_neighbors,
+    candidate_positions,
+    move,
+    random_neighbor,
+    rotate,
+    sample_neighbors,
+    swap,
+)
 from src.core.state import Placement
 from tests.factories import OUT, at, pkg, problem
 
@@ -43,3 +55,34 @@ def test_candidate_positions_drop_points_that_break_walls():
     state = (at(0, 0, 0), OUT)
     # (0,3,0) would need y up to 6 > 5: dropped.
     assert candidate_positions(prob, state, 1) == [(0, 0, 0), (0, 0, 1), (2, 0, 0)]
+
+
+def _prob_and_state():
+    prob = problem(*(pkg(i, 2, 2, 1) for i in range(6)), truck=(6, 6, 4))
+    return prob, random_state(prob, random.Random(3))
+
+
+def test_random_neighbor_is_reproducible_and_changes_one_move():
+    prob, state = _prob_and_state()
+    a = [random_neighbor(prob, state, rng) for rng in [random.Random(1)] for _ in range(50)]
+    b = [random_neighbor(prob, state, rng) for rng in [random.Random(1)] for _ in range(50)]
+    assert a == b
+    kinds = {m.kind for _, m in a}
+    assert kinds == {"move", "rotate", "swap"}
+    for neighbor, m in a:
+        changed = [k for k in range(len(state)) if neighbor[k] != state[k]]
+        allowed = {m.i} if m.j is None else {m.i, m.j}
+        assert set(changed) <= allowed
+
+
+def test_sample_neighbors_returns_k():
+    prob, state = _prob_and_state()
+    assert len(sample_neighbors(prob, state, 7, random.Random(0))) == 7
+
+
+def test_all_neighbors_covers_every_rotation_and_differs_from_state():
+    prob, state = _prob_and_state()
+    neighbors = list(all_neighbors(prob, state))
+    rotations = [m for _, m in neighbors if m.kind == "rotate"]
+    assert len(rotations) == 3 * len(state)
+    assert all(n != state for n, m in neighbors if m.kind != "rotate")
