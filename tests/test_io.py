@@ -2,8 +2,17 @@ import json
 
 import pytest
 
-from src.core.io import load_problem, problem_to_dict, save_problem
-from tests.factories import pkg, problem
+from src.core.io import (
+    load_problem,
+    load_result,
+    problem_to_dict,
+    save_problem,
+    save_result,
+    state_from_json,
+    state_to_json,
+)
+from src.core.result import RunResult
+from tests.factories import OUT, at, pkg, problem
 
 INSTANCE = {
     "truck": {"w": 10, "l": 20, "h": 5, "max_capacity": 500},
@@ -45,3 +54,22 @@ def test_invalid_instances_are_rejected(tmp_path, breakage, message):
     breakage(data)
     with pytest.raises(ValueError, match=message):
         load_problem(write(tmp_path, data))
+
+
+def test_state_round_trip_uses_spec_orientation_notation():
+    prob = problem(pkg(1), pkg(2))
+    state = (at(1, 2, 0, ("y", "x", "z")), OUT)
+    data = state_to_json(prob, state)
+    assert data[0] == {"id": "P1", "in_truck": True, "x": 1, "y": 2, "z": 0,
+                       "orientation": {"w": "y", "l": "x", "h": "z"}}
+    assert state_from_json(data) == state
+
+
+def test_result_round_trip(tmp_path):
+    prob = problem(pkg(1), pkg(2))
+    result = RunResult("ga", {"population_size": 4}, 1, 0.5,
+                       (OUT, OUT), 0, (at(0, 0, 0), OUT), 10,
+                       {"max": [0, 10], "mean": [0, 5.0]}, {"best_generation": 1})
+    path = tmp_path / "result.json"
+    save_result(prob, result, path)
+    assert load_result(path) == result
