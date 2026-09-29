@@ -1,6 +1,6 @@
-from src.core.neighbors import OUTSIDE, move, rotate, swap
+from src.core.neighbors import OUTSIDE, candidate_positions, move, rotate, swap
 from src.core.state import Placement
-from tests.factories import OUT, at
+from tests.factories import OUT, at, pkg, problem
 
 
 def test_move_into_truck_and_out():
@@ -29,3 +29,17 @@ def test_swap_exchanges_positions_not_orientations():
     assert swapped[0] == Placement(False, 0, 0, 0, ("y", "x", "z"))
     assert swapped[1] == at(0, 0, 0, ("x", "z", "y"))
     assert swap(swapped, 0, 1) == (a, Placement(False, 0, 0, 0, ("x", "z", "y")))
+
+
+def test_candidate_positions_are_extreme_points_that_fit():
+    prob = problem(pkg(1, 2, 3, 1), pkg(2, 2, 2, 2), truck=(5, 5, 5))
+    state = (at(0, 0, 0), OUT)
+    # Origin plus P1's right (2,0,0), front (0,3,0) and top (0,0,1) points.
+    assert candidate_positions(prob, state, 1) == [(0, 0, 0), (0, 0, 1), (0, 3, 0), (2, 0, 0)]
+
+
+def test_candidate_positions_drop_points_that_break_walls():
+    prob = problem(pkg(1, 2, 3, 1), pkg(2, 2, 3, 2), truck=(4, 5, 5))
+    state = (at(0, 0, 0), OUT)
+    # (0,3,0) would need y up to 6 > 5: dropped.
+    assert candidate_positions(prob, state, 1) == [(0, 0, 0), (0, 0, 1), (2, 0, 0)]

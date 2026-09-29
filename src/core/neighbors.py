@@ -9,6 +9,9 @@ Allowed moves (spec):
 """
 from dataclasses import dataclass, replace
 
+from src.core.geometry import box
+from src.core.models import Problem
+from src.core.orientation import extents
 from src.core.orientation import rotate as rotate_orientation
 from src.core.state import State, take_out
 
@@ -51,3 +54,25 @@ def swap(state: State, i: int, j: int) -> State:
     if not new_b.in_truck:
         new_b = take_out(new_b)
     return _with(_with(state, i, new_a), j, new_b)
+
+
+def candidate_positions(problem: Problem, state: State, i: int) -> list[tuple[int, int, int]]:
+    """Extreme points where package i could go: the origin plus the points
+    right of, in front of and on top of every package in the truck, keeping
+    only those where package i stays inside the walls.
+
+    Adapted from the extreme-point idea in T. G. Crainic, G. Perboli and
+    R. Tadei, "Extreme Point-Based Heuristics for Three-Dimensional Bin
+    Packing", INFORMS Journal on Computing 20(3), 2008.
+    """
+    truck = problem.truck
+    dx, dy, dz = extents(problem.packages[i], state[i].orientation)
+    points = {(0, 0, 0)}
+    for j, p in enumerate(state):
+        if p.in_truck and j != i:
+            x0, y0, z0, x1, y1, z1 = box(problem.packages[j], p)
+            points.update({(x1, y0, z0), (x0, y1, z0), (x0, y0, z1)})
+    return sorted(
+        (x, y, z) for x, y, z in points
+        if x + dx <= truck.w and y + dy <= truck.l and z + dz <= truck.h
+    )
