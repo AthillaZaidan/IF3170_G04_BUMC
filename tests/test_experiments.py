@@ -6,6 +6,7 @@ from src.algorithms.genetic import GAParams, run_genetic
 from src.core.io import load_result
 from src.experiments.artifacts import save_run
 from src.experiments.ga_experiment import main as experiment_main
+from src.experiments.ga_experiment import run_seed
 from src.generate_instance import generate
 from src.main import main
 
@@ -42,3 +43,9 @@ def test_ga_experiment_grid(tmp_path):
     assert (root / "pop6_gen3" / "seed2" / "final.png").exists()
     for name in ("compare_generations.png", "compare_population.png", "final_value_box.png"):
         assert (root / name).exists()
+
+
+def test_run_seeds_differ_between_configs_but_are_stable():
+    assert run_seed(50, 100, 1) == run_seed(50, 100, 1)
+    seeds = {run_seed(p, g, s) for p, g in [(50, 50), (50, 100), (20, 100)] for s in (1, 2, 3)}
+    assert len(seeds) == 9

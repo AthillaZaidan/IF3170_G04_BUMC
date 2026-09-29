@@ -5,10 +5,14 @@
 
 Usage: python -m src.experiments.ga_experiment --instance data/instances/medium.json
 
+Each (population, generations, seed) gets its own random seed (run_seed).
+Otherwise gen 50 with seed 1 would just be the first 50 generations of gen 200
+with seed 1, and the configurations would not be independent runs.
 A configuration that appears in both groups (e.g. pop 50, gen 100) runs once
-per seed and is reused, since the same seed gives the same result.
+per seed and is reused.
 """
 import argparse
+import zlib
 from pathlib import Path
 
 import pandas as pd
@@ -17,6 +21,11 @@ from src.algorithms.genetic import GAParams, run_genetic
 from src.core.io import load_problem
 from src.experiments.artifacts import save_run
 from src.viz.plots import plot_final_values, plot_ga_comparison
+
+
+def run_seed(pop: int, gens: int, seed: int) -> int:
+    """Deterministic seed for one run, distinct for every configuration."""
+    return zlib.crc32(f"pop{pop}-gen{gens}-seed{seed}".encode())
 
 
 def config_name(pop: int, gens: int) -> str:
@@ -51,7 +60,7 @@ def main(argv: list[str] | None = None) -> None:
                 key = (pop, gens, seed)
                 if key not in results:
                     params = GAParams(pop, gens, args.mutation_rate, args.elitism)
-                    results[key] = run_genetic(problem, params, seed)
+                    results[key] = run_genetic(problem, params, run_seed(pop, gens, seed))
                     save_run(problem, results[key],
                              root / config_name(pop, gens) / f"seed{seed}",
                              f"GA pop {pop}, gen {gens}, seed {seed}")
@@ -61,6 +70,7 @@ def main(argv: list[str] | None = None) -> None:
                 rows.append({
                     "group": group, "config": config_name(pop, gens),
                     "population": pop, "generations": gens, "seed": seed,
+                    "run_seed": result.seed,
                     "initial_value": result.initial_value,
                     "final_value": result.final_value,
                     "duration_s": round(result.duration_s, 4),
