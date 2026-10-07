@@ -29,6 +29,25 @@ def plot_ga_curve(history: dict[str, list[float]], title: str, path: str | Path)
     plt.close(fig)
 
 
+def plot_objective_curve(history: dict[str, list[float]], title: str, path: str | Path) -> None:
+    if "max" in history and "mean" in history:
+        plot_ga_curve(history, title, path)
+        return
+
+    values = history["value"]
+    iterations = range(len(values))
+    fig, ax = plt.subplots(figsize=(8, 4.5))
+    sns.lineplot(x=iterations, y=values, ax=ax, color=GA_MAX_COLOR,
+                 label="current", linewidth=2)
+    if "best" in history and history["best"] != values:
+        sns.lineplot(x=iterations, y=history["best"], ax=ax, color=GA_MEAN_COLOR,
+                     label="best", linewidth=1.5)
+    ax.set(title=title, xlabel="Iteration", ylabel="Objective (total value)")
+    fig.tight_layout()
+    fig.savefig(path, dpi=120)
+    plt.close(fig)
+
+
 def plot_ga_comparison(curves: pd.DataFrame, title: str, path: str | Path) -> None:
     """Max-fitness curves per configuration: line = mean over seeds, band =
     min-max over seeds. Columns: config, seed, generation, max."""

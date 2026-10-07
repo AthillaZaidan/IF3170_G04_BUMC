@@ -29,6 +29,14 @@ def test_cli_runs_ga_once(tmp_path, capsys):
     assert "final value" in capsys.readouterr().out
 
 
+def test_cli_runs_hc_once(tmp_path, capsys):
+    out = tmp_path / "hc-single"
+    main(["hc", "--instance", "data/instances/small.json", "--variant", "stochastic",
+          "--iters", "3", "--samples", "8", "--seed", "2", "--out", str(out)])
+    assert (out / "result.json").exists()
+    assert "final value" in capsys.readouterr().out
+
+
 def test_ga_experiment_grid(tmp_path):
     experiment_main([
         "--instance", "data/instances/small.json", "--out", str(tmp_path),
