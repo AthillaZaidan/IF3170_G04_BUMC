@@ -43,6 +43,9 @@ python -m src.main sa --instance data/instances/medium.json --iters 20000 --p0 0
 # satu kali run GA
 python -m src.main ga --instance data/instances/medium.json --pop 50 --gens 100 --seed 1
 
+# satu kali run HC (varian: steepest, stochastic, sideways, random-restart)
+python -m src.main hc --instance data/instances/medium.json --variant steepest --iters 100 --seed 1
+
 # eksperimen SA: grid schedule x p0 x t_min x iterasi x ratio_bias, 5 seed per konfigurasi
 python -m src.experiments.sa_experiment --instance data/instances/medium.json \
     --iterations 20000 --p0 0.01 --ratio-bias 0 0.5
