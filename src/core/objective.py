@@ -27,7 +27,10 @@ def default_penalty(problem: Problem) -> int:
     return max((p.value for p in problem.packages), default=0) + 1
 
 
-def total_value(problem: Problem, state: State) -> int:
+# Objective "eta" (bonus): value / ETA, so a package due sooner counts for more.
+def total_value(problem: Problem, state: State) -> float:
+    if problem.objective == "eta":
+        return sum(pkg.value / pkg.eta for pkg, p in zip(problem.packages, state) if p.in_truck)
     return sum(pkg.value for pkg, p in zip(problem.packages, state) if p.in_truck)
 
 

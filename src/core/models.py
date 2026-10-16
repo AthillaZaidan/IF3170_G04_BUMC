@@ -23,10 +23,11 @@ class Truck:
     w: int
     l: int
     h: int
-    max_capacity: int  # in weight units (spec v1.3)
+    max_capacity: int
 
 
 @dataclass(frozen=True)
 class Problem:
     truck: Truck
     packages: tuple[Package, ...]
+    objective: str = "value"  # "value" | "eta"

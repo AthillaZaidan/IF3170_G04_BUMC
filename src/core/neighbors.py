@@ -1,12 +1,3 @@
-"""Neighbor moves from the spec, shared by Hill-Climbing, SA and GA mutation.
-
-Every function is pure: it returns a new State and never changes its input.
-Allowed moves (spec):
-1. swap two packages (inside or outside the truck),
-2. move a package to another coordinate (including into or out of the truck,
-   per the course QnA),
-3. rotate a package 90 degrees about x, y or z.
-"""
 import random
 from collections.abc import Iterator
 from dataclasses import dataclass, replace
