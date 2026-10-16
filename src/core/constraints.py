@@ -1,8 +1,3 @@
-"""Constraint checks from the spec. Only packages inside the truck are checked.
-
-Each check reports Violation records rather than a bool, so the objective can
-count them for its penalty and the demo can show what went wrong.
-"""
 from dataclasses import dataclass
 from itertools import combinations
 

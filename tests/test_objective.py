@@ -30,3 +30,10 @@ def test_capacity_penalty_scales_with_excess_weight():
 def test_total_value_only_counts_inside():
     prob = problem(pkg(1, value=30), pkg(2, value=50))
     assert total_value(prob, (OUT, at(0, 0, 0))) == 50
+
+
+def test_eta_objective_divides_value_by_eta():
+    from dataclasses import replace
+    a, b = replace(pkg(1, value=30), eta=3), replace(pkg(2, value=50), eta=5)
+    prob = replace(problem(a, b), objective="eta")
+    assert total_value(prob, (at(0, 0, 0), at(2, 0, 0))) == 30 / 3 + 50 / 5

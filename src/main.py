@@ -1,16 +1,21 @@
 import argparse
+from dataclasses import replace
 from pathlib import Path
 
 from src.algorithms.genetic import GAParams, run_genetic
 from src.algorithms.hill_climbing import HCParams, run_hill_climbing
 from src.algorithms.simulated_annealing import SCHEDULES, SAParams, run_simulated_annealing
-from src.core.io import load_problem
+from src.core.io import load_problem as _load
 from src.experiments.artifacts import save_run
 from src.experiments.sa_experiment import save_sa_run
 
 
+def load_problem(path, objective="value"):
+    return replace(_load(path), objective=objective)
+
+
 def _run_ga(args: argparse.Namespace) -> None:
-    problem = load_problem(args.instance)
+    problem = load_problem(args.instance, args.objective)
     params = GAParams(args.pop, args.gens, args.mutation_rate, args.elitism)
     result = run_genetic(problem, params, args.seed)
     out = args.out or Path("output/ga") / args.instance.stem / "single" / (
@@ -23,7 +28,7 @@ def _run_ga(args: argparse.Namespace) -> None:
 
 
 def _run_hc(args: argparse.Namespace) -> None:
-    problem = load_problem(args.instance)
+    problem = load_problem(args.instance, args.objective)
     params = HCParams(
         variant=args.variant,
         max_iterations=args.iters,
@@ -49,7 +54,7 @@ def _run_hc(args: argparse.Namespace) -> None:
 
 
 def _run_sa(args: argparse.Namespace) -> None:
-    problem = load_problem(args.instance)
+    problem = load_problem(args.instance, args.objective)
     params = SAParams(max_iterations=args.iters, t0=args.t0, t_min=args.t_min,
                       schedule=args.schedule, p0=args.p0, stuck_patience=args.patience,
                       ratio_bias=args.ratio_bias)
@@ -70,6 +75,7 @@ def main(argv: list[str] | None = None) -> None:
 
     ga = sub.add_parser("ga", help="Genetic Algorithm")
     ga.add_argument("--instance", type=Path, required=True)
+    ga.add_argument("--objective", choices=("value", "eta"), default="value")
     ga.add_argument("--pop", type=int, default=50, help="population size")
     ga.add_argument("--gens", type=int, default=100, help="number of generations")
     ga.add_argument("--mutation-rate", type=float, default=0.2)
@@ -80,6 +86,7 @@ def main(argv: list[str] | None = None) -> None:
 
     hc = sub.add_parser("hc", help="Hill-Climbing variants")
     hc.add_argument("--instance", type=Path, required=True)
+    hc.add_argument("--objective", choices=("value", "eta"), default="value")
     hc.add_argument(
         "--variant",
         choices=("steepest", "stochastic", "sideways", "random-restart"),
@@ -95,6 +102,7 @@ def main(argv: list[str] | None = None) -> None:
 
     sa = sub.add_parser("sa", help="Simulated Annealing")
     sa.add_argument("--instance", type=Path, required=True)
+    sa.add_argument("--objective", choices=("value", "eta"), default="value")
     sa.add_argument("--iters", type=int, default=SAParams.max_iterations)
     sa.add_argument("--t0", type=float, help="initial temperature (default: calibrated from --p0)")
     sa.add_argument("--t-min", type=float, default=SAParams.t_min, help="final temperature")
