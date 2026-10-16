@@ -1,0 +1,396 @@
+{
+  "algorithm": "hc-stochastic",
+  "params": {
+    "variant": "stochastic",
+    "max_iterations": 100,
+    "neighbor_samples": 50,
+    "max_sideways": 20,
+    "max_restarts": 5
+  },
+  "seed": 4155490647,
+  "duration_s": 0.010999082995112985,
+  "initial_state": [
+    {
+      "id": "P001",
+      "in_truck": true,
+      "x": 3,
+      "y": 4,
+      "z": 0,
+      "orientation": {
+        "w": "x",
+        "l": "y",
+        "h": "z"
+      }
+    },
+    {
+      "id": "P002",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "x",
+        "h": "z"
+      }
+    },
+    {
+      "id": "P003",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "z",
+        "h": "x"
+      }
+    },
+    {
+      "id": "P004",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "x",
+        "l": "z",
+        "h": "y"
+      }
+    },
+    {
+      "id": "P005",
+      "in_truck": true,
+      "x": 2,
+      "y": 2,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "x",
+        "h": "z"
+      }
+    },
+    {
+      "id": "P006",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "x",
+        "l": "z",
+        "h": "y"
+      }
+    },
+    {
+      "id": "P007",
+      "in_truck": true,
+      "x": 1,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "z",
+        "h": "x"
+      }
+    },
+    {
+      "id": "P008",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "x",
+        "l": "y",
+        "h": "z"
+      }
+    },
+    {
+      "id": "P009",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "x",
+        "h": "z"
+      }
+    },
+    {
+      "id": "P010",
+      "in_truck": true,
+      "x": 2,
+      "y": 5,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "z",
+        "h": "x"
+      }
+    },
+    {
+      "id": "P011",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "z",
+        "h": "x"
+      }
+    },
+    {
+      "id": "P012",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "x",
+        "h": "z"
+      }
+    },
+    {
+      "id": "P013",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "z",
+        "l": "y",
+        "h": "x"
+      }
+    },
+    {
+      "id": "P014",
+      "in_truck": true,
+      "x": 3,
+      "y": 6,
+      "z": 0,
+      "orientation": {
+        "w": "x",
+        "l": "z",
+        "h": "y"
+      }
+    },
+    {
+      "id": "P015",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "x",
+        "h": "z"
+      }
+    }
+  ],
+  "initial_value": 270,
+  "final_state": [
+    {
+      "id": "P001",
+      "in_truck": true,
+      "x": 3,
+      "y": 4,
+      "z": 0,
+      "orientation": {
+        "w": "x",
+        "l": "y",
+        "h": "z"
+      }
+    },
+    {
+      "id": "P002",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "x",
+        "h": "z"
+      }
+    },
+    {
+      "id": "P003",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "z",
+        "h": "x"
+      }
+    },
+    {
+      "id": "P004",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "x",
+        "l": "z",
+        "h": "y"
+      }
+    },
+    {
+      "id": "P005",
+      "in_truck": true,
+      "x": 2,
+      "y": 2,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "x",
+        "h": "z"
+      }
+    },
+    {
+      "id": "P006",
+      "in_truck": true,
+      "x": 3,
+      "y": 3,
+      "z": 0,
+      "orientation": {
+        "w": "x",
+        "l": "z",
+        "h": "y"
+      }
+    },
+    {
+      "id": "P007",
+      "in_truck": true,
+      "x": 1,
+      "y": 3,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "z",
+        "h": "x"
+      }
+    },
+    {
+      "id": "P008",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "x",
+        "l": "y",
+        "h": "z"
+      }
+    },
+    {
+      "id": "P009",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "x",
+        "h": "z"
+      }
+    },
+    {
+      "id": "P010",
+      "in_truck": true,
+      "x": 2,
+      "y": 5,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "z",
+        "h": "x"
+      }
+    },
+    {
+      "id": "P011",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "z",
+        "h": "x"
+      }
+    },
+    {
+      "id": "P012",
+      "in_truck": true,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "x",
+        "h": "z"
+      }
+    },
+    {
+      "id": "P013",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "z",
+        "l": "y",
+        "h": "x"
+      }
+    },
+    {
+      "id": "P014",
+      "in_truck": true,
+      "x": 3,
+      "y": 6,
+      "z": 0,
+      "orientation": {
+        "w": "x",
+        "l": "z",
+        "h": "y"
+      }
+    },
+    {
+      "id": "P015",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "x",
+        "h": "z"
+      }
+    }
+  ],
+  "final_value": 406,
+  "history": {
+    "value": [
+      270,
+      280,
+      348,
+      406
+    ],
+    "best": [
+      270,
+      280,
+      348,
+      406
+    ]
+  },
+  "extra": {
+    "iterations": 3,
+    "stop_reason": "local_optimum"
+  }
+}

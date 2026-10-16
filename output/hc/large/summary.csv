@@ -1,0 +1,13 @@
+config,seed,run_seed,initial_value,final_value,upper_bound,gap_to_bound,duration_s,iterations,stop_reason
+steepest,1,2294755976,1485,5221,5633,0.0731,878.7374,65,local_optimum
+steepest,2,298738482,1379,5181,5633,0.0802,579.3886,64,local_optimum
+steepest,3,1724470180,1506,5215,5633,0.0742,622.4177,63,local_optimum
+stochastic,1,4155490647,1443,3035,5633,0.4612,0.4875,45,local_optimum
+stochastic,2,1856409837,1668,3236,5633,0.4255,1.0585,36,local_optimum
+stochastic,3,430022779,1475,2912,5633,0.483,0.8748,42,local_optimum
+sideways,1,186568816,1644,5107,5633,0.0934,934.2229,82,max_sideways
+sideways,2,2451014090,1584,5283,5633,0.0621,838.4032,81,max_sideways
+sideways,3,3843076444,1689,5149,5633,0.0859,994.8252,84,max_sideways
+random-restart,1,1567659389,1989,5281,5633,0.0625,1654.9876,185,restarts_done
+random-restart,2,3296314567,1329,5295,5633,0.06,1698.6177,189,restarts_done
+random-restart,3,3011441745,1586,5209,5633,0.0753,1697.5077,185,restarts_done
