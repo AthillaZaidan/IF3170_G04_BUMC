@@ -1,0 +1,524 @@
+{
+  "algorithm": "hc-random-restart",
+  "params": {
+    "variant": "random-restart",
+    "max_iterations": 100,
+    "neighbor_samples": 50,
+    "max_sideways": 20,
+    "max_restarts": 5
+  },
+  "seed": 3296314567,
+  "duration_s": 1.2847588330041617,
+  "initial_state": [
+    {
+      "id": "P001",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "z",
+        "h": "x"
+      }
+    },
+    {
+      "id": "P002",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "x",
+        "h": "z"
+      }
+    },
+    {
+      "id": "P003",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "z",
+        "l": "x",
+        "h": "y"
+      }
+    },
+    {
+      "id": "P004",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "z",
+        "h": "x"
+      }
+    },
+    {
+      "id": "P005",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "x",
+        "l": "y",
+        "h": "z"
+      }
+    },
+    {
+      "id": "P006",
+      "in_truck": true,
+      "x": 1,
+      "y": 3,
+      "z": 0,
+      "orientation": {
+        "w": "z",
+        "l": "y",
+        "h": "x"
+      }
+    },
+    {
+      "id": "P007",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "z",
+        "h": "x"
+      }
+    },
+    {
+      "id": "P008",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "z",
+        "l": "x",
+        "h": "y"
+      }
+    },
+    {
+      "id": "P009",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "x",
+        "l": "z",
+        "h": "y"
+      }
+    },
+    {
+      "id": "P010",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "x",
+        "l": "z",
+        "h": "y"
+      }
+    },
+    {
+      "id": "P011",
+      "in_truck": true,
+      "x": 4,
+      "y": 5,
+      "z": 0,
+      "orientation": {
+        "w": "z",
+        "l": "x",
+        "h": "y"
+      }
+    },
+    {
+      "id": "P012",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "x",
+        "h": "z"
+      }
+    },
+    {
+      "id": "P013",
+      "in_truck": true,
+      "x": 2,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "x",
+        "l": "z",
+        "h": "y"
+      }
+    },
+    {
+      "id": "P014",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "x",
+        "l": "z",
+        "h": "y"
+      }
+    },
+    {
+      "id": "P015",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "x",
+        "h": "z"
+      }
+    }
+  ],
+  "initial_value": 151,
+  "final_state": [
+    {
+      "id": "P001",
+      "in_truck": true,
+      "x": 0,
+      "y": 6,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "x",
+        "h": "z"
+      }
+    },
+    {
+      "id": "P002",
+      "in_truck": true,
+      "x": 1,
+      "y": 1,
+      "z": 0,
+      "orientation": {
+        "w": "z",
+        "l": "y",
+        "h": "x"
+      }
+    },
+    {
+      "id": "P003",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "z",
+        "l": "y",
+        "h": "x"
+      }
+    },
+    {
+      "id": "P004",
+      "in_truck": true,
+      "x": 1,
+      "y": 6,
+      "z": 0,
+      "orientation": {
+        "w": "x",
+        "l": "z",
+        "h": "y"
+      }
+    },
+    {
+      "id": "P005",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "z",
+        "l": "y",
+        "h": "x"
+      }
+    },
+    {
+      "id": "P006",
+      "in_truck": true,
+      "x": 0,
+      "y": 1,
+      "z": 2,
+      "orientation": {
+        "w": "y",
+        "l": "x",
+        "h": "z"
+      }
+    },
+    {
+      "id": "P007",
+      "in_truck": true,
+      "x": 0,
+      "y": 2,
+      "z": 3,
+      "orientation": {
+        "w": "x",
+        "l": "y",
+        "h": "z"
+      }
+    },
+    {
+      "id": "P008",
+      "in_truck": true,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "z",
+        "h": "x"
+      }
+    },
+    {
+      "id": "P009",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "z",
+        "l": "y",
+        "h": "x"
+      }
+    },
+    {
+      "id": "P010",
+      "in_truck": true,
+      "x": 0,
+      "y": 1,
+      "z": 3,
+      "orientation": {
+        "w": "y",
+        "l": "z",
+        "h": "x"
+      }
+    },
+    {
+      "id": "P011",
+      "in_truck": true,
+      "x": 1,
+      "y": 4,
+      "z": 0,
+      "orientation": {
+        "w": "x",
+        "l": "y",
+        "h": "z"
+      }
+    },
+    {
+      "id": "P012",
+      "in_truck": true,
+      "x": 0,
+      "y": 1,
+      "z": 0,
+      "orientation": {
+        "w": "x",
+        "l": "y",
+        "h": "z"
+      }
+    },
+    {
+      "id": "P013",
+      "in_truck": false,
+      "x": 0,
+      "y": 0,
+      "z": 0,
+      "orientation": {
+        "w": "y",
+        "l": "x",
+        "h": "z"
+      }
+    },
+    {
+      "id": "P014",
+      "in_truck": true,
+      "x": 0,
+      "y": 4,
+      "z": 2,
+      "orientation": {
+        "w": "z",
+        "l": "y",
+        "h": "x"
+      }
+    },
+    {
+      "id": "P015",
+      "in_truck": true,
+      "x": 1,
+      "y": 2,
+      "z": 0,
+      "orientation": {
+        "w": "x",
+        "l": "z",
+        "h": "y"
+      }
+    }
+  ],
+  "final_value": 722,
+  "history": {
+    "value": [
+      151,
+      244,
+      312,
+      370,
+      423,
+      475,
+      553,
+      603,
+      644,
+      253,
+      346,
+      414,
+      478,
+      536,
+      589,
+      630,
+      157,
+      225,
+      283,
+      341,
+      391,
+      432,
+      458,
+      536,
+      600,
+      615,
+      245,
+      309,
+      367,
+      420,
+      470,
+      159,
+      249,
+      327,
+      391,
+      449,
+      507,
+      562,
+      617,
+      667,
+      708,
+      722,
+      276,
+      366,
+      434,
+      492,
+      550,
+      603,
+      644,
+      653,
+      658,
+      708
+    ],
+    "best": [
+      151,
+      244,
+      312,
+      370,
+      423,
+      475,
+      553,
+      603,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      644,
+      667,
+      708,
+      722,
+      722,
+      722,
+      722,
+      722,
+      722,
+      722,
+      722,
+      722,
+      722,
+      722
+    ]
+  },
+  "extra": {
+    "restarts": 5,
+    "iterations_per_restart": [
+      8,
+      6,
+      9,
+      4,
+      10,
+      9
+    ],
+    "initial_values": [
+      151,
+      253,
+      157,
+      245,
+      159,
+      276
+    ],
+    "restart_offsets": [
+      0,
+      9,
+      16,
+      26,
+      31,
+      42
+    ],
+    "stop_reasons": [
+      "local_optimum",
+      "local_optimum",
+      "local_optimum",
+      "local_optimum",
+      "local_optimum",
+      "local_optimum"
+    ],
+    "best_restart": 4
+  }
+}
