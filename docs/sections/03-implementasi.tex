@@ -44,7 +44,7 @@ truk yang sejajar dengan sisi \texttt{w}, \texttt{l}, dan \texttt{h}; misalnya
 \textit{immutable} (\texttt{frozen=True}), \textit{state} dapat langsung dibandingkan
 dan disimpan di dalam \textit{set}.
 
-\lstinputlisting[caption={Model persoalan (\texttt{src/core/models.py})},linerange={9-33}]{../src/core/models.py}
+\lstinputlisting[caption={Model persoalan (\texttt{src/core/models.py})},linerange={9-39}]{../src/core/models.py}
 \lstinputlisting[caption={Representasi \textit{state} (\texttt{src/core/state.py})}]{../src/core/state.py}
 
 \section{Batasan dan Fungsi Objektif}
@@ -55,7 +55,7 @@ paket yang hanya bersentuhan sisi tidak dianggap bertumpuk. Fungsi
 \texttt{rests\_on} mengikuti definisi tumpuan pada spesifikasi: paket atas tepat
 berada di permukaan atas paket bawah dan proyeksi alasnya beririsan.
 
-\lstinputlisting[caption={Pemeriksaan batasan (\texttt{src/core/constraints.py})},linerange={16-52}]{../src/core/constraints.py}
+\lstinputlisting[caption={Pemeriksaan batasan (\texttt{src/core/constraints.py})},linerange={16-66}]{../src/core/constraints.py}
 
 Fungsi objektif adalah total \textit{value} paket di dalam truk. Modul ini juga
 menyediakan \texttt{evaluate}, yaitu \textit{value} dikurangi penalti sebesar
@@ -85,7 +85,7 @@ sehingga peningkatan nilai tetap berasal dari algoritma pencarian. Langkahnya:
 	Jika permukaan tempatnya mendarat adalah paket \textit{fragile}, paket dikeluarkan.
 \end{enumerate}
 
-\lstinputlisting[caption={Heuristik \textit{repair} (\texttt{src/core/repair.py})},linerange={23-63}]{../src/core/repair.py}
+\lstinputlisting[caption={Heuristik \textit{repair} untuk satu truk (\texttt{src/core/repair.py})},linerange={36-76}]{../src/core/repair.py}
 
 \section{Aksi Tetangga}
 
@@ -96,7 +96,7 @@ mengembalikan \textit{state} baru:
 bertukar), dan \texttt{swap} menukar posisi dua paket (masing-masing tetap dengan
 orientasinya).
 
-\lstinputlisting[caption={Aksi \textit{move}, \textit{rotate}, dan \textit{swap} (\texttt{src/core/neighbors.py})},linerange={27-50}]{../src/core/neighbors.py}
+\lstinputlisting[caption={Aksi \textit{move}, \textit{rotate}, dan \textit{swap} (\texttt{src/core/neighbors.py})},linerange={28-54}]{../src/core/neighbors.py}
 
 Ruang koordinat bilangan bulat sangat besar, sedangkan kebanyakan koordinat acak
 menghasilkan paket melayang. Karena itu, tujuan aksi \textit{move} diambil dari
@@ -109,7 +109,7 @@ koordinat acak di dalam dinding. \texttt{all\_neighbors} membangkitkan semua tet
 untuk \textit{steepest-ascent}: semua rotasi, semua \textit{swap} yang mengubah
 sesuatu, serta semua \textit{move} ke luar truk dan ke setiap \textit{extreme point}.
 
-\lstinputlisting[caption={\textit{Extreme points} dan tetangga acak (\texttt{src/core/neighbors.py})},linerange={52-111}]{../src/core/neighbors.py}
+\lstinputlisting[caption={\textit{Extreme points} dan tetangga acak (\texttt{src/core/neighbors.py})},linerange={56-120}]{../src/core/neighbors.py}
 
 \section{State Awal}
 
@@ -118,7 +118,7 @@ orientasi acak dan, dengan peluang 0,5, dimasukkan ke truk pada koordinat acak d
 dalam dinding. \textit{State} ini umumnya tidak valid, lalu di-\textit{repair} oleh
 setiap algoritma.
 
-\lstinputlisting[caption={\textit{State} awal acak (\texttt{src/core/initial.py})},linerange={13-30}]{../src/core/initial.py}
+\lstinputlisting[caption={\textit{State} awal acak (\texttt{src/core/initial.py})},linerange={13-32}]{../src/core/initial.py}
 
 \section{Batas Atas Optimum Global}
 \label{sec:bound}
@@ -131,7 +131,7 @@ mengabaikan geometri, sehingga nilainya selalu $\ge$ optimum global. Besaran
 $\text{gap} = 1 - f(s)/\text{batas atas}$ merupakan batas atas jarak hasil ke optimum
 global.
 
-\lstinputlisting[caption={Batas atas \textit{knapsack} (\texttt{src/core/bounds.py})},linerange={14-24}]{../src/core/bounds.py}
+\lstinputlisting[caption={Batas atas \textit{knapsack} (\texttt{src/core/bounds.py})},linerange={14-29}]{../src/core/bounds.py}
 
 \section{Hill-Climbing}
 
@@ -221,6 +221,35 @@ paket dibagi dengan ETA-nya:
 Paket yang harus tiba lebih cepat (ETA kecil) menjadi lebih berharga, sehingga
 truk memprioritaskan paket yang mendesak. Objektif ini dipilih dengan opsi
 \texttt{--objective eta} dan berlaku untuk ketiga algoritma.
+
+\section{Bonus: Multi-Truk}
+\label{sec:multitruck-impl}
+
+Program dapat menerima armada berisi $N$ truk identik (opsi \texttt{--trucks N} atau
+\texttt{"truck\_count"} pada JSON instans). Setiap truk memakai dimensi dan kapasitas
+\texttt{truck} dari instans. Objektifnya adalah total \textit{value} paket yang
+diangkut seluruh armada, dan setiap paket hanya dapat berada di satu truk.
+Perubahan utamanya:
+\begin{itemize}
+	\item \textbf{Representasi.} \texttt{Placement} mendapat atribut \texttt{truck\_id};
+	\texttt{Problem} mendapat \texttt{truck\_count}.
+	\item \textbf{Batasan dan \textit{repair}} dijalankan terpisah untuk setiap truk.
+	Dinding, tumpang tindih, tumpuan, \textit{fragile}, dan kapasitas berat hanya
+	membandingkan paket di truk yang sama. Paket dengan \texttt{truck\_id} tidak valid
+	dikeluarkan.
+	\item \textbf{Aksi tetangga.} \textit{Move} dapat memindahkan paket ke truk lain
+	(tujuannya \textit{extreme point} di truk tujuan), dan \textit{swap} menukar posisi
+	sekaligus truk dua paket. \texttt{all\_neighbors} membangkitkan \textit{move} ke
+	setiap truk. Ketiga algoritma tidak perlu diubah karena bekerja melalui operator
+	yang sama.
+	\item \textbf{Batas atas} memakai kapasitas berat dan volume gabungan armada,
+	tetap sebagai relaksasi \textit{knapsack}.
+	\item \textbf{Visualisasi} menampilkan setiap truk beserta berat muatannya.
+\end{itemize}
+Untuk satu truk, urutan bilangan acak yang dipakai tidak berubah, sehingga seluruh
+hasil eksperimen satu truk tetap dapat direproduksi persis.
+
+\lstinputlisting[caption={\textit{Repair} per truk (\texttt{src/core/repair.py})},linerange={23-34}]{../src/core/repair.py}
 
 \section{Visualisasi dan Keluaran}
 
