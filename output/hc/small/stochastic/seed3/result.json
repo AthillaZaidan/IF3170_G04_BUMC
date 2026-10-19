@@ -8,7 +8,7 @@
     "max_restarts": 5
   },
   "seed": 430022779,
-  "duration_s": 0.039382292015943676,
+  "duration_s": 0.09809600003063679,
   "initial_state": [
     {
       "id": "P001",
@@ -255,10 +255,10 @@
     },
     {
       "id": "P006",
-      "in_truck": false,
-      "x": 0,
-      "y": 0,
-      "z": 0,
+      "in_truck": true,
+      "x": 2,
+      "y": 2,
+      "z": 2,
       "orientation": {
         "w": "x",
         "l": "y",
@@ -315,9 +315,9 @@
     },
     {
       "id": "P011",
-      "in_truck": false,
-      "x": 0,
-      "y": 0,
+      "in_truck": true,
+      "x": 2,
+      "y": 3,
       "z": 0,
       "orientation": {
         "w": "y",
@@ -374,7 +374,7 @@
       }
     }
   ],
-  "final_value": 595,
+  "final_value": 708,
   "history": {
     "value": [
       317,
@@ -384,7 +384,10 @@
       481,
       531,
       554,
-      595
+      595,
+      650,
+      653,
+      708
     ],
     "best": [
       317,
@@ -394,11 +397,174 @@
       481,
       531,
       554,
-      595
+      595,
+      650,
+      653,
+      708
     ]
   },
   "extra": {
-    "iterations": 7,
+    "iterations": 10,
     "stop_reason": "local_optimum"
+  },
+  "problem": {
+    "truck": {
+      "w": 6,
+      "l": 8,
+      "h": 5,
+      "max_capacity": 150
+    },
+    "packages": [
+      {
+        "id": "P001",
+        "w": 1,
+        "l": 1,
+        "h": 3,
+        "value": 41,
+        "weight": 9,
+        "fragile": true,
+        "eta": 1
+      },
+      {
+        "id": "P002",
+        "w": 5,
+        "l": 1,
+        "h": 5,
+        "value": 64,
+        "weight": 2,
+        "fragile": true,
+        "eta": 2
+      },
+      {
+        "id": "P003",
+        "w": 2,
+        "l": 5,
+        "h": 5,
+        "value": 13,
+        "weight": 19,
+        "fragile": true,
+        "eta": 6
+      },
+      {
+        "id": "P004",
+        "w": 5,
+        "l": 4,
+        "h": 2,
+        "value": 67,
+        "weight": 20,
+        "fragile": false,
+        "eta": 7
+      },
+      {
+        "id": "P005",
+        "w": 1,
+        "l": 2,
+        "h": 4,
+        "value": 53,
+        "weight": 10,
+        "fragile": true,
+        "eta": 7
+      },
+      {
+        "id": "P006",
+        "w": 3,
+        "l": 1,
+        "h": 1,
+        "value": 58,
+        "weight": 4,
+        "fragile": false,
+        "eta": 3
+      },
+      {
+        "id": "P007",
+        "w": 5,
+        "l": 3,
+        "h": 1,
+        "value": 68,
+        "weight": 19,
+        "fragile": true,
+        "eta": 4
+      },
+      {
+        "id": "P008",
+        "w": 1,
+        "l": 5,
+        "h": 3,
+        "value": 90,
+        "weight": 21,
+        "fragile": false,
+        "eta": 3
+      },
+      {
+        "id": "P009",
+        "w": 5,
+        "l": 2,
+        "h": 1,
+        "value": 15,
+        "weight": 23,
+        "fragile": false,
+        "eta": 3
+      },
+      {
+        "id": "P010",
+        "w": 1,
+        "l": 2,
+        "h": 1,
+        "value": 58,
+        "weight": 10,
+        "fragile": false,
+        "eta": 7
+      },
+      {
+        "id": "P011",
+        "w": 3,
+        "l": 2,
+        "h": 3,
+        "value": 55,
+        "weight": 7,
+        "fragile": false,
+        "eta": 6
+      },
+      {
+        "id": "P012",
+        "w": 1,
+        "l": 5,
+        "h": 2,
+        "value": 78,
+        "weight": 26,
+        "fragile": false,
+        "eta": 4
+      },
+      {
+        "id": "P013",
+        "w": 4,
+        "l": 3,
+        "h": 5,
+        "value": 38,
+        "weight": 23,
+        "fragile": false,
+        "eta": 7
+      },
+      {
+        "id": "P014",
+        "w": 1,
+        "l": 2,
+        "h": 1,
+        "value": 50,
+        "weight": 14,
+        "fragile": false,
+        "eta": 2
+      },
+      {
+        "id": "P015",
+        "w": 5,
+        "l": 3,
+        "h": 2,
+        "value": 93,
+        "weight": 17,
+        "fragile": false,
+        "eta": 6
+      }
+    ]
   }
 }

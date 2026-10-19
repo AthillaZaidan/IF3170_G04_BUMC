@@ -8,7 +8,7 @@
     "max_restarts": 5
   },
   "seed": 430022779,
-  "duration_s": 0.8133718750032131,
+  "duration_s": 20.123095800168812,
   "initial_state": [
     {
       "id": "P001",
@@ -769,10 +769,10 @@
     },
     {
       "id": "P004",
-      "in_truck": false,
+      "in_truck": true,
       "x": 0,
-      "y": 0,
-      "z": 0,
+      "y": 7,
+      "z": 3,
       "orientation": {
         "w": "x",
         "l": "y",
@@ -795,29 +795,29 @@
     },
     {
       "id": "P006",
-      "in_truck": false,
-      "x": 0,
-      "y": 0,
+      "in_truck": true,
+      "x": 7,
+      "y": 2,
       "z": 0,
       "orientation": {
         "w": "y",
         "l": "z",
         "h": "x"
       },
-      "truck_id": 0
+      "truck_id": 1
     },
     {
       "id": "P007",
-      "in_truck": false,
-      "x": 0,
+      "in_truck": true,
+      "x": 2,
       "y": 0,
-      "z": 0,
+      "z": 3,
       "orientation": {
         "w": "x",
         "l": "y",
         "h": "z"
       },
-      "truck_id": 0
+      "truck_id": 1
     },
     {
       "id": "P008",
@@ -834,16 +834,16 @@
     },
     {
       "id": "P009",
-      "in_truck": false,
-      "x": 0,
-      "y": 0,
-      "z": 0,
+      "in_truck": true,
+      "x": 2,
+      "y": 8,
+      "z": 4,
       "orientation": {
         "w": "x",
         "l": "y",
         "h": "z"
       },
-      "truck_id": 0
+      "truck_id": 1
     },
     {
       "id": "P010",
@@ -927,14 +927,14 @@
       "id": "P016",
       "in_truck": true,
       "x": 6,
-      "y": 18,
+      "y": 8,
       "z": 0,
       "orientation": {
         "w": "x",
         "l": "y",
         "h": "z"
       },
-      "truck_id": 0
+      "truck_id": 1
     },
     {
       "id": "P017",
@@ -951,9 +951,9 @@
     },
     {
       "id": "P018",
-      "in_truck": false,
-      "x": 0,
-      "y": 0,
+      "in_truck": true,
+      "x": 4,
+      "y": 5,
       "z": 0,
       "orientation": {
         "w": "z",
@@ -1042,16 +1042,16 @@
     },
     {
       "id": "P025",
-      "in_truck": false,
-      "x": 0,
-      "y": 0,
-      "z": 0,
+      "in_truck": true,
+      "x": 8,
+      "y": 14,
+      "z": 2,
       "orientation": {
         "w": "y",
         "l": "z",
         "h": "x"
       },
-      "truck_id": 0
+      "truck_id": 1
     },
     {
       "id": "P026",
@@ -1068,9 +1068,9 @@
     },
     {
       "id": "P027",
-      "in_truck": false,
-      "x": 0,
-      "y": 0,
+      "in_truck": true,
+      "x": 5,
+      "y": 12,
       "z": 0,
       "orientation": {
         "w": "x",
@@ -1094,10 +1094,10 @@
     },
     {
       "id": "P029",
-      "in_truck": false,
-      "x": 0,
-      "y": 0,
-      "z": 0,
+      "in_truck": true,
+      "x": 1,
+      "y": 12,
+      "z": 1,
       "orientation": {
         "w": "x",
         "l": "z",
@@ -1107,16 +1107,16 @@
     },
     {
       "id": "P030",
-      "in_truck": false,
-      "x": 0,
-      "y": 0,
+      "in_truck": true,
+      "x": 2,
+      "y": 19,
       "z": 0,
       "orientation": {
         "w": "z",
         "l": "y",
         "h": "x"
       },
-      "truck_id": 0
+      "truck_id": 1
     },
     {
       "id": "P031",
@@ -1198,10 +1198,10 @@
     },
     {
       "id": "P037",
-      "in_truck": false,
-      "x": 0,
-      "y": 0,
-      "z": 0,
+      "in_truck": true,
+      "x": 5,
+      "y": 7,
+      "z": 3,
       "orientation": {
         "w": "y",
         "l": "z",
@@ -1225,8 +1225,8 @@
     {
       "id": "P039",
       "in_truck": true,
-      "x": 2,
-      "y": 17,
+      "x": 6,
+      "y": 18,
       "z": 0,
       "orientation": {
         "w": "z",
@@ -1263,29 +1263,29 @@
     },
     {
       "id": "P042",
-      "in_truck": false,
-      "x": 0,
-      "y": 0,
+      "in_truck": true,
+      "x": 8,
+      "y": 14,
       "z": 0,
       "orientation": {
         "w": "y",
         "l": "z",
         "h": "x"
       },
-      "truck_id": 0
+      "truck_id": 1
     },
     {
       "id": "P043",
-      "in_truck": false,
-      "x": 0,
-      "y": 0,
+      "in_truck": true,
+      "x": 4,
+      "y": 7,
       "z": 0,
       "orientation": {
         "w": "x",
         "l": "y",
         "h": "z"
       },
-      "truck_id": 0
+      "truck_id": 1
     },
     {
       "id": "P044",
@@ -1342,34 +1342,34 @@
     {
       "id": "P048",
       "in_truck": true,
-      "x": 2,
+      "x": 1,
       "y": 0,
-      "z": 3,
+      "z": 0,
       "orientation": {
         "w": "y",
         "l": "z",
         "h": "x"
       },
-      "truck_id": 1
+      "truck_id": 0
     },
     {
       "id": "P049",
       "in_truck": true,
-      "x": 1,
-      "y": 0,
-      "z": 0,
+      "x": 6,
+      "y": 8,
+      "z": 3,
       "orientation": {
         "w": "x",
         "l": "y",
         "h": "z"
       },
-      "truck_id": 0
+      "truck_id": 1
     },
     {
       "id": "P050",
-      "in_truck": false,
-      "x": 0,
-      "y": 0,
+      "in_truck": true,
+      "x": 2,
+      "y": 17,
       "z": 0,
       "orientation": {
         "w": "y",
@@ -1422,7 +1422,7 @@
       "in_truck": true,
       "x": 3,
       "y": 17,
-      "z": 1,
+      "z": 0,
       "orientation": {
         "w": "y",
         "l": "x",
@@ -1433,8 +1433,8 @@
     {
       "id": "P055",
       "in_truck": true,
-      "x": 5,
-      "y": 12,
+      "x": 4,
+      "y": 0,
       "z": 0,
       "orientation": {
         "w": "y",
@@ -1444,7 +1444,7 @@
       "truck_id": 0
     }
   ],
-  "final_value": 1844,
+  "final_value": 2409,
   "history": {
     "value": [
       824,
@@ -1482,7 +1482,30 @@
       1808,
       1821,
       1831,
-      1844
+      1844,
+      1877,
+      1893,
+      1901,
+      1935,
+      1950,
+      1951,
+      2000,
+      2047,
+      2053,
+      2111,
+      2115,
+      2133,
+      2213,
+      2214,
+      2238,
+      2290,
+      2307,
+      2318,
+      2333,
+      2349,
+      2365,
+      2376,
+      2409
     ],
     "best": [
       824,
@@ -1520,11 +1543,34 @@
       1808,
       1821,
       1831,
-      1844
+      1844,
+      1877,
+      1893,
+      1901,
+      1935,
+      1950,
+      1951,
+      2000,
+      2047,
+      2053,
+      2111,
+      2115,
+      2133,
+      2213,
+      2214,
+      2238,
+      2290,
+      2307,
+      2318,
+      2333,
+      2349,
+      2365,
+      2376,
+      2409
     ]
   },
   "extra": {
-    "iterations": 35,
+    "iterations": 58,
     "stop_reason": "local_optimum"
   },
   "problem": {

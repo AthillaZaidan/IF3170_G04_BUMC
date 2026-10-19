@@ -8,7 +8,7 @@
     "max_restarts": 5
   },
   "seed": 4155490647,
-  "duration_s": 0.010999082995112985,
+  "duration_s": 0.1012518999632448,
   "initial_state": [
     {
       "id": "P001",
@@ -196,8 +196,8 @@
     {
       "id": "P001",
       "in_truck": true,
-      "x": 3,
-      "y": 4,
+      "x": 0,
+      "y": 6,
       "z": 0,
       "orientation": {
         "w": "x",
@@ -207,8 +207,8 @@
     },
     {
       "id": "P002",
-      "in_truck": false,
-      "x": 0,
+      "in_truck": true,
+      "x": 5,
       "y": 0,
       "z": 0,
       "orientation": {
@@ -256,9 +256,9 @@
     {
       "id": "P006",
       "in_truck": true,
-      "x": 3,
-      "y": 3,
-      "z": 0,
+      "x": 2,
+      "y": 5,
+      "z": 2,
       "orientation": {
         "w": "x",
         "l": "z",
@@ -279,9 +279,9 @@
     },
     {
       "id": "P008",
-      "in_truck": false,
+      "in_truck": true,
       "x": 0,
-      "y": 0,
+      "y": 1,
       "z": 0,
       "orientation": {
         "w": "x",
@@ -315,9 +315,9 @@
     },
     {
       "id": "P011",
-      "in_truck": false,
-      "x": 0,
-      "y": 0,
+      "in_truck": true,
+      "x": 3,
+      "y": 5,
       "z": 0,
       "orientation": {
         "w": "y",
@@ -353,7 +353,7 @@
       "id": "P014",
       "in_truck": true,
       "x": 3,
-      "y": 6,
+      "y": 4,
       "z": 0,
       "orientation": {
         "w": "x",
@@ -374,23 +374,197 @@
       }
     }
   ],
-  "final_value": 406,
+  "final_value": 615,
   "history": {
     "value": [
       270,
       280,
       348,
-      406
+      406,
+      496,
+      551,
+      557,
+      560,
+      565,
+      574,
+      615
     ],
     "best": [
       270,
       280,
       348,
-      406
+      406,
+      496,
+      551,
+      557,
+      560,
+      565,
+      574,
+      615
     ]
   },
   "extra": {
-    "iterations": 3,
+    "iterations": 10,
     "stop_reason": "local_optimum"
+  },
+  "problem": {
+    "truck": {
+      "w": 6,
+      "l": 8,
+      "h": 5,
+      "max_capacity": 150
+    },
+    "packages": [
+      {
+        "id": "P001",
+        "w": 1,
+        "l": 1,
+        "h": 3,
+        "value": 41,
+        "weight": 9,
+        "fragile": true,
+        "eta": 1
+      },
+      {
+        "id": "P002",
+        "w": 5,
+        "l": 1,
+        "h": 5,
+        "value": 64,
+        "weight": 2,
+        "fragile": true,
+        "eta": 2
+      },
+      {
+        "id": "P003",
+        "w": 2,
+        "l": 5,
+        "h": 5,
+        "value": 13,
+        "weight": 19,
+        "fragile": true,
+        "eta": 6
+      },
+      {
+        "id": "P004",
+        "w": 5,
+        "l": 4,
+        "h": 2,
+        "value": 67,
+        "weight": 20,
+        "fragile": false,
+        "eta": 7
+      },
+      {
+        "id": "P005",
+        "w": 1,
+        "l": 2,
+        "h": 4,
+        "value": 53,
+        "weight": 10,
+        "fragile": true,
+        "eta": 7
+      },
+      {
+        "id": "P006",
+        "w": 3,
+        "l": 1,
+        "h": 1,
+        "value": 58,
+        "weight": 4,
+        "fragile": false,
+        "eta": 3
+      },
+      {
+        "id": "P007",
+        "w": 5,
+        "l": 3,
+        "h": 1,
+        "value": 68,
+        "weight": 19,
+        "fragile": true,
+        "eta": 4
+      },
+      {
+        "id": "P008",
+        "w": 1,
+        "l": 5,
+        "h": 3,
+        "value": 90,
+        "weight": 21,
+        "fragile": false,
+        "eta": 3
+      },
+      {
+        "id": "P009",
+        "w": 5,
+        "l": 2,
+        "h": 1,
+        "value": 15,
+        "weight": 23,
+        "fragile": false,
+        "eta": 3
+      },
+      {
+        "id": "P010",
+        "w": 1,
+        "l": 2,
+        "h": 1,
+        "value": 58,
+        "weight": 10,
+        "fragile": false,
+        "eta": 7
+      },
+      {
+        "id": "P011",
+        "w": 3,
+        "l": 2,
+        "h": 3,
+        "value": 55,
+        "weight": 7,
+        "fragile": false,
+        "eta": 6
+      },
+      {
+        "id": "P012",
+        "w": 1,
+        "l": 5,
+        "h": 2,
+        "value": 78,
+        "weight": 26,
+        "fragile": false,
+        "eta": 4
+      },
+      {
+        "id": "P013",
+        "w": 4,
+        "l": 3,
+        "h": 5,
+        "value": 38,
+        "weight": 23,
+        "fragile": false,
+        "eta": 7
+      },
+      {
+        "id": "P014",
+        "w": 1,
+        "l": 2,
+        "h": 1,
+        "value": 50,
+        "weight": 14,
+        "fragile": false,
+        "eta": 2
+      },
+      {
+        "id": "P015",
+        "w": 5,
+        "l": 3,
+        "h": 2,
+        "value": 93,
+        "weight": 17,
+        "fragile": false,
+        "eta": 6
+      }
+    ]
   }
 }

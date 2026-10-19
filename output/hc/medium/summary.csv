@@ -2,9 +2,9 @@ config,seed,run_seed,initial_value,final_value,upper_bound,gap_to_bound,duration
 steepest,1,2294755976,718,2203,2384,0.0759,49.6534,26,local_optimum
 steepest,2,298738482,532,2197,2384,0.0784,86.0241,31,local_optimum
 steepest,3,1724470180,602,2241,2384,0.06,24.8418,31,local_optimum
-stochastic,1,4155490647,944,1404,2384,0.4111,0.1462,11,local_optimum
-stochastic,2,1856409837,361,1516,2384,0.3641,0.457,39,local_optimum
-stochastic,3,430022779,674,1489,2384,0.3754,0.2736,21,local_optimum
+stochastic,1,4155490647,944,2132,2384,0.1057,17.809,36,local_optimum
+stochastic,2,1856409837,361,2144,2384,0.1007,23.7434,62,local_optimum
+stochastic,3,430022779,674,2040,2384,0.1443,16.7144,46,local_optimum
 sideways,1,186568816,704,2199,2384,0.0776,49.5884,47,max_sideways
 sideways,2,2451014090,732,2201,2384,0.0768,50.3034,48,max_sideways
 sideways,3,3843076444,658,2178,2384,0.0864,52.4049,48,max_sideways
