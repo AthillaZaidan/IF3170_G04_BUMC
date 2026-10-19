@@ -199,4 +199,4 @@ optimum, sehingga `1 - value / batas_atas` adalah batas atas jarak hasil ke glob
 |---|---|---|
 | Athilla Zaidan Zidna Fann | 13524068 | Genetic Algorithm |
 | Jason Edward Salim | 13524034 | Simulated Annealing |
-| Raynard Fausta | 13524052 | Hill-Climbing |
+| Raynard Fausta | 13524052 | Hill-Climbing, multi-truk (bonus) |
