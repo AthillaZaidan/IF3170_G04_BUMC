@@ -1,0 +1,48 @@
+\section{Kesimpulan}
+
+\begin{enumerate}
+	\item Ketiga algoritma \textit{local search} (Hill-Climbing dengan keempat variannya,
+	Simulated Annealing, dan Genetic Algorithm) berhasil diimplementasikan untuk
+	persoalan pengisian peti kemas truk. Seluruh solusi akhir memenuhi batasan dinding,
+	tumpang tindih, tumpuan, \textit{fragile}, dan kapasitas berkat heuristik
+	\textit{repair}.
+	\item Simulated Annealing memberikan keseimbangan terbaik antara kualitas dan waktu.
+	SA mencapai optimum global (terbukti oleh batas atas \textit{knapsack}) pada instans
+	\textit{small} di ketiga \textit{run}, dan berada 5--10\% dari batas atas pada
+	instans yang lebih besar dalam hitungan detik.
+	\item HC \textit{random-restart} memberikan hasil terbaik dan paling konsisten pada
+	instans \textit{medium} dan \textit{large}, tetapi waktunya paling lama (sekitar 28
+	menit per \textit{run} pada \textit{large}) karena membangkitkan seluruh tetangga di
+	setiap iterasi. HC \textit{stochastic} paling cepat tetapi paling mudah terjebak.
+	\item Genetic Algorithm versi salindia (\textit{roulette wheel}, \textit{single-point
+	crossover}, mutasi) bekerja cukup baik pada instans kecil, tetapi tertinggal jauh pada
+	instans sedang dan besar. \textit{Crossover} yang menukar ekor kromosom merusak susunan
+	geometris yang dibangun induk. Menambah populasi dan generasi tetap meningkatkan
+	hasil, tetapi tidak menutup selisih tersebut.
+	\item Parameter terpenting SA adalah banyak iterasi dan jadwal suhu. Jadwal geometrik
+	dengan $p_0$ dan $T_{\min}$ kecil memberikan hasil terbaik.
+	\item Objektif alternatif berbasis ETA berhasil menggeser pilihan paket ke paket yang
+	lebih mendesak dengan pengorbanan total \textit{value} yang kecil (3,8\%).
+\end{enumerate}
+
+\section{Saran}
+
+\begin{enumerate}
+	\item \textbf{Representasi GA berbasis urutan.} Kromosom dapat diubah menjadi urutan
+	paket beserta orientasinya, lalu didekode secara \textit{greedy} ke \textit{extreme
+	point} pertama yang valid. Dengan \textit{order crossover}, anak selalu berupa susunan
+	valid yang mewarisi urutan prioritas induknya.
+	\item \textbf{Inisialisasi dan pengisian \textit{greedy}.} Uji coba awal di luar kode
+	utama, yaitu menambahkan langkah pengisian \textit{greedy} ke \textit{extreme point}
+	setelah \textit{repair}, menaikkan rata-rata GA (populasi 50, generasi 100) dari
+	sekitar 1439 menjadi 2313 pada \textit{medium} dan dari 2302 menjadi 5370 pada
+	\textit{large}. Sebagian besar kenaikan berasal dari heuristik \textit{greedy} itu
+	sendiri, sehingga pendekatan ini perlu dikaji sebagai algoritma memetik.
+	\item \textbf{Evaluasi inkremental.} \textit{Repair} dan pemeriksaan batasan saat ini
+	menghitung ulang seluruh \textit{state} untuk setiap tetangga. Evaluasi inkremental
+	(hanya memeriksa paket yang berubah) akan mempercepat HC \textit{steepest} secara
+	signifikan.
+	\item \textbf{Eksekusi paralel.} \textit{Run} antar-\textit{seed} dan antarkonfigurasi
+	independen, sehingga eksperimen dapat dijalankan paralel. Pengukuran durasi
+	sebaiknya tetap dilakukan dalam kondisi yang sama untuk semua algoritma.
+\end{enumerate}

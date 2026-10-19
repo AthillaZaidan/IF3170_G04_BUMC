@@ -1,0 +1,54 @@
+{\scriptsize\setlength{\tabcolsep}{4pt}
+\begin{longtable}{l c r r r r r p{3.6cm}}
+\caption{Hasil setiap \textit{run} Hill-Climbing}\label{tab:hc-runs}\\
+\toprule
+\textbf{Varian} & \textbf{Seed} & \textbf{Awal} & \textbf{Akhir} & \textbf{Gap (\%)} & \textbf{Durasi (s)} & \textbf{Iterasi} & \textbf{Berhenti karena} \\
+\endfirsthead
+\toprule
+\textbf{Varian} & \textbf{Seed} & \textbf{Awal} & \textbf{Akhir} & \textbf{Gap (\%)} & \textbf{Durasi (s)} & \textbf{Iterasi} & \textbf{Berhenti karena} \\
+\endhead
+\midrule
+\multicolumn{8}{l}{\textit{small} (batas atas 734)} \\
+Steepest & 1 & 119 & 708 & 3.5 & 0.17 & 11 & local optimum \\
+Steepest & 2 & 222 & 661 & 10.0 & 0.20 & 7 & local optimum \\
+Steepest & 3 & 209 & 673 & 8.3 & 0.49 & 7 & local optimum \\
+Stochastic & 1 & 270 & 406 & 44.7 & 0.01 & 3 & local optimum \\
+Stochastic & 2 & 347 & 614 & 16.4 & 0.05 & 11 & local optimum \\
+Stochastic & 3 & 317 & 595 & 18.9 & 0.04 & 7 & local optimum \\
+Sideways & 1 & 235 & 630 & 14.2 & 1.27 & 27 & max sideways \\
+Sideways & 2 & 189 & 708 & 3.5 & 1.20 & 29 & max sideways \\
+Sideways & 3 & 279 & 708 & 3.5 & 1.07 & 30 & max sideways \\
+Random-restart & 1 & 434 & 708 & 3.5 & 0.99 & 37 & max restart (5 restart: 4, 8, 7, 7, 5, 6) \\
+Random-restart & 2 & 151 & 722 & 1.6 & 1.28 & 46 & max restart (5 restart: 8, 6, 9, 4, 10, 9) \\
+Random-restart & 3 & 212 & 708 & 3.5 & 1.36 & 39 & max restart (5 restart: 8, 7, 6, 3, 7, 8) \\
+\midrule
+\multicolumn{8}{l}{\textit{medium} (batas atas 2384)} \\
+Steepest & 1 & 718 & 2203 & 7.6 & 49.65 & 26 & local optimum \\
+Steepest & 2 & 532 & 2197 & 7.8 & 86.02 & 31 & local optimum \\
+Steepest & 3 & 602 & 2241 & 6.0 & 24.84 & 31 & local optimum \\
+Stochastic & 1 & 944 & 1404 & 41.1 & 0.15 & 11 & local optimum \\
+Stochastic & 2 & 361 & 1516 & 36.4 & 0.46 & 39 & local optimum \\
+Stochastic & 3 & 674 & 1489 & 37.5 & 0.27 & 21 & local optimum \\
+Sideways & 1 & 704 & 2199 & 7.8 & 49.59 & 47 & max sideways \\
+Sideways & 2 & 732 & 2201 & 7.7 & 50.30 & 48 & max sideways \\
+Sideways & 3 & 658 & 2178 & 8.6 & 52.40 & 48 & max sideways \\
+Random-restart & 1 & 1102 & 2269 & 4.8 & 126.60 & 167 & max restart (5 restart: 21, 26, 29, 34, 29, 28) \\
+Random-restart & 2 & 702 & 2256 & 5.4 & 117.72 & 163 & max restart (5 restart: 30, 29, 30, 23, 27, 24) \\
+Random-restart & 3 & 794 & 2257 & 5.3 & 117.85 & 173 & max restart (5 restart: 28, 31, 27, 33, 28, 26) \\
+\midrule
+\multicolumn{8}{l}{\textit{large} (batas atas 5633)} \\
+Steepest & 1 & 1485 & 5221 & 7.3 & 878.74 & 65 & local optimum \\
+Steepest & 2 & 1379 & 5181 & 8.0 & 579.39 & 64 & local optimum \\
+Steepest & 3 & 1506 & 5215 & 7.4 & 622.42 & 63 & local optimum \\
+Stochastic & 1 & 1443 & 3035 & 46.1 & 0.49 & 45 & local optimum \\
+Stochastic & 2 & 1668 & 3236 & 42.5 & 1.06 & 36 & local optimum \\
+Stochastic & 3 & 1475 & 2912 & 48.3 & 0.87 & 42 & local optimum \\
+Sideways & 1 & 1644 & 5107 & 9.3 & 934.22 & 82 & max sideways \\
+Sideways & 2 & 1584 & 5283 & 6.2 & 838.40 & 81 & max sideways \\
+Sideways & 3 & 1689 & 5149 & 8.6 & 994.83 & 84 & max sideways \\
+Random-restart & 1 & 1989 & 5281 & 6.2 & 1654.99 & 185 & max restart (2 restart: 52, 67, 66) \\
+Random-restart & 2 & 1329 & 5295 & 6.0 & 1698.62 & 189 & max restart (2 restart: 65, 59, 65) \\
+Random-restart & 3 & 1586 & 5209 & 7.5 & 1697.51 & 185 & max restart (2 restart: 61, 61, 63) \\
+\bottomrule
+\end{longtable}
+}
