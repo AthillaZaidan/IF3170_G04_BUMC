@@ -1,5 +1,6 @@
 import argparse
 import zlib
+from dataclasses import replace
 from pathlib import Path
 
 import pandas as pd
@@ -40,6 +41,7 @@ def save_sa_run(problem: Problem, result: RunResult, run_dir: Path, label: str) 
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Simulated Annealing experiment grid")
     parser.add_argument("--instance", type=Path, required=True)
+    parser.add_argument("--trucks", type=int)
     parser.add_argument("--out", type=Path, default=Path("output/sa"))
     parser.add_argument("--iterations", type=int, nargs="+", default=[20000])
     parser.add_argument("--schedules", nargs="+", choices=SCHEDULES, default=["geometric"])
@@ -51,8 +53,11 @@ def main(argv: list[str] | None = None) -> None:
     args = parser.parse_args(argv)
 
     problem = load_problem(args.instance)
+    if args.trucks is not None:
+        problem = replace(problem, truck_count=args.trucks)
     bound = value_upper_bound(problem)
-    root = args.out / args.instance.stem
+    instance_name = args.instance.stem + (f"_trucks{problem.truck_count}" if problem.truck_count > 1 else "")
+    root = args.out / instance_name
     rows, curves = [], []
     grid = [(s, p, t, n, b) for s in args.schedules for p in args.p0
             for t in args.t_min for n in args.iterations for b in args.ratio_bias]
@@ -75,7 +80,7 @@ def main(argv: list[str] | None = None) -> None:
                 "initial_value": result.initial_value,
                 "final_value": result.final_value,
                 "upper_bound": bound,
-                "gap_to_bound": round(1 - result.final_value / bound, 4),
+                "gap_to_bound": round(1 - result.final_value / bound, 4) if bound else 0,
                 "duration_s": round(result.duration_s, 4),
                 "t0": round(e["t0"], 3),
                 "stuck_count": e["stuck_count"],

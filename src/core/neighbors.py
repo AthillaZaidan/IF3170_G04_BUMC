@@ -18,17 +18,21 @@ class Move:
     j: int | None = None
     target: tuple[int, int, int] | None = None
     axis: str | None = None
+    truck_id: int | None = None
 
 
 def _with(state: State, i: int, placement) -> State:
     return state[:i] + (placement,) + state[i + 1:]
 
 
-def move(state: State, i: int, target: tuple[int, int, int] | None) -> State:
+def move(state: State, i: int, target: tuple[int, int, int] | None,
+         truck_id: int | None = None) -> State:
     if target is OUTSIDE:
         return _with(state, i, take_out(state[i]))
     x, y, z = target
-    return _with(state, i, replace(state[i], in_truck=True, x=x, y=y, z=z))
+    destination = state[i].truck_id if truck_id is None else truck_id
+    return _with(state, i, replace(state[i], in_truck=True, x=x, y=y, z=z,
+                                   truck_id=destination))
 
 
 def rotate(state: State, i: int, axis: str) -> State:
@@ -40,8 +44,8 @@ def rotate(state: State, i: int, axis: str) -> State:
 def swap(state: State, i: int, j: int) -> State:
     """Packages i and j trade positions; each keeps its own orientation."""
     a, b = state[i], state[j]
-    new_a = replace(a, in_truck=b.in_truck, x=b.x, y=b.y, z=b.z)
-    new_b = replace(b, in_truck=a.in_truck, x=a.x, y=a.y, z=a.z)
+    new_a = replace(a, in_truck=b.in_truck, x=b.x, y=b.y, z=b.z, truck_id=b.truck_id)
+    new_b = replace(b, in_truck=a.in_truck, x=a.x, y=a.y, z=a.z, truck_id=a.truck_id)
     if not new_a.in_truck:
         new_a = take_out(new_a)
     if not new_b.in_truck:
@@ -49,7 +53,8 @@ def swap(state: State, i: int, j: int) -> State:
     return _with(_with(state, i, new_a), j, new_b)
 
 
-def candidate_positions(problem: Problem, state: State, i: int) -> list[tuple[int, int, int]]:
+def candidate_positions(problem: Problem, state: State, i: int,
+                        truck_id: int | None = None) -> list[tuple[int, int, int]]:
     """Extreme points where package i could go: the origin plus the points
     right of, in front of and on top of every package in the truck, keeping
     only those where package i stays inside the walls.
@@ -59,10 +64,11 @@ def candidate_positions(problem: Problem, state: State, i: int) -> list[tuple[in
     Packing", INFORMS Journal on Computing 20(3), 2008.
     """
     truck = problem.truck
+    destination = state[i].truck_id if truck_id is None else truck_id
     dx, dy, dz = extents(problem.packages[i], state[i].orientation)
     points = {(0, 0, 0)}
     for j, p in enumerate(state):
-        if p.in_truck and j != i:
+        if p.in_truck and p.truck_id == destination and j != i:
             x0, y0, z0, x1, y1, z1 = box(problem.packages[j], p)
             points.update({(x1, y0, z0), (x0, y1, z0), (x0, y0, z1)})
     return sorted(
@@ -72,11 +78,11 @@ def candidate_positions(problem: Problem, state: State, i: int) -> list[tuple[in
 
 
 def random_position(problem: Problem, state: State, i: int,
-                    rng: random.Random) -> tuple[int, int, int] | None:
+                    rng: random.Random, truck_id: int | None = None) -> tuple[int, int, int] | None:
     """Half the time an extreme point, otherwise a uniform in-bounds corner.
     None when package i does not fit in the truck in its orientation."""
     if rng.random() < 0.5:
-        candidates = candidate_positions(problem, state, i)
+        candidates = candidate_positions(problem, state, i, truck_id)
         if candidates:
             return rng.choice(candidates)
     truck = problem.truck
@@ -103,11 +109,14 @@ def random_neighbor(problem: Problem, state: State,
         i, j = rng.sample(range(n), 2)
         return swap(state, i, j), Move("swap", i, j=j)
     i = rng.randrange(n)
+    truck_id = state[i].truck_id
     if state[i].in_truck and rng.random() < 0.2:
         target = OUTSIDE
     else:
-        target = random_position(problem, state, i, rng)
-    return move(state, i, target), Move("move", i, target=target)
+        if problem.truck_count > 1:
+            truck_id = rng.randrange(problem.truck_count)
+        target = random_position(problem, state, i, rng, truck_id)
+    return move(state, i, target, truck_id), Move("move", i, target=target, truck_id=truck_id)
 
 
 def sample_neighbors(problem: Problem, state: State, k: int,
@@ -132,6 +141,8 @@ def all_neighbors(problem: Problem, state: State) -> Iterator[tuple[State, Move]
         if state[i].in_truck:
             yield move(state, i, OUTSIDE), Move("move", i, target=OUTSIDE)
         current = (state[i].x, state[i].y, state[i].z) if state[i].in_truck else None
-        for target in candidate_positions(problem, state, i):
-            if target != current:
-                yield move(state, i, target), Move("move", i, target=target)
+        for truck_id in range(problem.truck_count):
+            for target in candidate_positions(problem, state, i, truck_id):
+                if target != current or state[i].truck_id != truck_id:
+                    yield move(state, i, target, truck_id), Move(
+                        "move", i, target=target, truck_id=truck_id)

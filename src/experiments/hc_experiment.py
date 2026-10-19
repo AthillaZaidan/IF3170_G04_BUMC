@@ -1,5 +1,6 @@
 import argparse
 import zlib
+from dataclasses import replace
 from pathlib import Path
 
 import pandas as pd
@@ -21,6 +22,7 @@ def run_seed(variant: str, seed: int) -> int:
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Hill-Climbing variants, several seeds each")
     parser.add_argument("--instance", type=Path, required=True)
+    parser.add_argument("--trucks", type=int)
     parser.add_argument("--out", type=Path, default=Path("output/hc"))
     parser.add_argument("--variants", nargs="+", choices=VARIANTS, default=VARIANTS)
     parser.add_argument("--iters", type=int, default=100)
@@ -31,8 +33,11 @@ def main(argv: list[str] | None = None) -> None:
     args = parser.parse_args(argv)
 
     problem = load_problem(args.instance)
+    if args.trucks is not None:
+        problem = replace(problem, truck_count=args.trucks)
     bound = value_upper_bound(problem)
-    root = args.out / args.instance.stem
+    instance_name = args.instance.stem + (f"_trucks{problem.truck_count}" if problem.truck_count > 1 else "")
+    root = args.out / instance_name
     params = HCParams(max_iterations=args.iters, neighbor_samples=args.samples,
                       max_sideways=args.max_sideways, max_restarts=args.max_restarts)
     rows = []
@@ -48,7 +53,7 @@ def main(argv: list[str] | None = None) -> None:
                 "config": variant, "seed": seed, "run_seed": result.seed,
                 "initial_value": result.initial_value, "final_value": result.final_value,
                 "upper_bound": bound,
-                "gap_to_bound": round(1 - result.final_value / bound, 4),
+                "gap_to_bound": round(1 - result.final_value / bound, 4) if bound else 0,
                 "duration_s": round(result.duration_s, 4),
                 "iterations": e.get("iterations", sum(e.get("iterations_per_restart", []))),
                 "stop_reason": e.get("stop_reason", "restarts_done"),

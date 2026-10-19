@@ -13,6 +13,7 @@ per seed and is reused.
 """
 import argparse
 import zlib
+from dataclasses import replace
 from pathlib import Path
 
 import pandas as pd
@@ -35,6 +36,7 @@ def config_name(pop: int, gens: int) -> str:
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="GA population/generation experiment")
     parser.add_argument("--instance", type=Path, required=True)
+    parser.add_argument("--trucks", type=int)
     parser.add_argument("--out", type=Path, default=Path("output/ga"))
     parser.add_argument("--control-pop", type=int, default=50)
     parser.add_argument("--gens-list", type=int, nargs="+", default=[50, 100, 200])
@@ -46,7 +48,10 @@ def main(argv: list[str] | None = None) -> None:
     args = parser.parse_args(argv)
 
     problem = load_problem(args.instance)
-    root = args.out / args.instance.stem
+    if args.trucks is not None:
+        problem = replace(problem, truck_count=args.trucks)
+    instance_name = args.instance.stem + (f"_trucks{problem.truck_count}" if problem.truck_count > 1 else "")
+    root = args.out / instance_name
     groups = {
         "generations": [(args.control_pop, g) for g in args.gens_list],
         "population": [(p, args.control_gens) for p in args.pop_list],
