@@ -32,7 +32,7 @@ Algoritma yang diimplementasikan:
 3. Genetic Algorithm
 
 Bonus yang dikerjakan: seluruh varian Hill-Climbing (steepest-ascent, stochastic, sideways move,
-random-restart) dan objective function alternatif berbasis ETA (`value / eta`).
+random-restart), objective function alternatif berbasis ETA (`value / eta`), dan multi-truk.
 
 ## Struktur Repository
 
@@ -92,6 +92,36 @@ python -m src.main ga --instance data/instances/medium.json --pop 50 --gens 100 
 # Bonus: objective ETA
 python -m src.main sa --instance data/instances/medium.json --objective eta --seed 1
 ```
+
+### Multi-truk
+
+Opsi `--trucks N` tersedia pada HC (semua varian), SA, GA, generator instance, dan skrip
+eksperimen. Armada terdiri dari N truk identik, masing-masing memakai dimensi dan kapasitas
+`truck` dari instance. Nilai objective adalah total paket yang diangkut seluruh armada;
+setiap paket hanya bisa berada di satu truk. Paket dapat dipindahkan atau ditukar antartuk.
+Constraint berat, dinding, overlap, penopang, dan fragile diperiksa per truk.
+
+```bash
+python -m src.main hc --instance data/instances/small.json --trucks 2 --variant steepest
+python -m src.main sa --instance data/instances/small.json --trucks 2 --iters 2000
+python -m src.main ga --instance data/instances/small.json --trucks 2 --pop 50 --gens 100
+python -m src.experiments.hc_experiment --instance data/instances/small.json --trucks 2
+python -m src.generate_instance --size small --trucks 2 --seed 42
+```
+
+Jumlah truk juga dapat disimpan sebagai `"truck_count": 2` pada level teratas JSON instance.
+Jika `--trucks` diberikan, nilainya menggantikan `truck_count` dari file. Tanpa keduanya,
+program memakai satu truk. File JSON lama tetap dapat dibaca.
+
+Output multi-truk memakai folder instance bersufiks `_trucksN`, misalnya
+`output/hc/small_trucks2/single/`. `initial.png` dan `final.png` menampilkan setiap truk,
+termasuk truk kosong, beserta berat muatannya. `result.json` menyimpan konfigurasi armada
+di `problem` dan `truck_id` berbasis nol pada setiap placement; abaikan `truck_id` jika
+`in_truck` bernilai `false`.
+
+Batas atas eksperimen memakai kapasitas berat dan volume gabungan armada, sambil
+mengecualikan paket yang tidak muat dalam satu truk. Nilainya merupakan relaksasi
+knapsack, sehingga pembagian paket antartuk masih dapat membatasi solusi sebenarnya.
 
 ### Eksperimen
 
@@ -169,4 +199,4 @@ optimum, sehingga `1 - value / batas_atas` adalah batas atas jarak hasil ke glob
 |---|---|---|
 | Athilla Zaidan Zidna Fann | 13524068 | Genetic Algorithm |
 | Jason Edward Salim | 13524034 | Simulated Annealing |
-| Raynard Fausta | 13524052 | Hill-Climbing |
+| Raynard Fausta | 13524052 | Hill-Climbing, multi-truk (bonus) |

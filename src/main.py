@@ -10,15 +10,18 @@ from src.experiments.artifacts import save_run
 from src.experiments.sa_experiment import save_sa_run
 
 
-def load_problem(path, objective="value"):
-    return replace(_load(path), objective=objective)
+def load_problem(path, objective="value", trucks=None):
+    problem = _load(path)
+    return replace(problem, objective=objective,
+                   truck_count=problem.truck_count if trucks is None else trucks)
 
 
 def _run_ga(args: argparse.Namespace) -> None:
-    problem = load_problem(args.instance, args.objective)
+    problem = load_problem(args.instance, args.objective, args.trucks)
     params = GAParams(args.pop, args.gens, args.mutation_rate, args.elitism)
     result = run_genetic(problem, params, args.seed)
-    out = args.out or Path("output/ga") / args.instance.stem / "single" / (
+    instance_name = args.instance.stem + (f"_trucks{problem.truck_count}" if problem.truck_count > 1 else "")
+    out = args.out or Path("output/ga") / instance_name / "single" / (
         f"pop{args.pop}_gen{args.gens}_seed{args.seed}")
     save_run(problem, result, out, f"GA pop {args.pop}, gen {args.gens}, seed {args.seed}")
     print(f"initial value {result.initial_value} -> final value {result.final_value} "
@@ -28,7 +31,7 @@ def _run_ga(args: argparse.Namespace) -> None:
 
 
 def _run_hc(args: argparse.Namespace) -> None:
-    problem = load_problem(args.instance, args.objective)
+    problem = load_problem(args.instance, args.objective, args.trucks)
     params = HCParams(
         variant=args.variant,
         max_iterations=args.iters,
@@ -37,7 +40,8 @@ def _run_hc(args: argparse.Namespace) -> None:
         max_restarts=args.max_restarts,
     )
     result = run_hill_climbing(problem, params, args.seed)
-    out = args.out or Path("output/hc") / args.instance.stem / "single" / (
+    instance_name = args.instance.stem + (f"_trucks{problem.truck_count}" if problem.truck_count > 1 else "")
+    out = args.out or Path("output/hc") / instance_name / "single" / (
         f"{args.variant}_iter{args.iters}_seed{args.seed}")
     save_run(problem, result, out, f"HC {args.variant}, iter {args.iters}, seed {args.seed}")
 
@@ -54,12 +58,13 @@ def _run_hc(args: argparse.Namespace) -> None:
 
 
 def _run_sa(args: argparse.Namespace) -> None:
-    problem = load_problem(args.instance, args.objective)
+    problem = load_problem(args.instance, args.objective, args.trucks)
     params = SAParams(max_iterations=args.iters, t0=args.t0, t_min=args.t_min,
                       schedule=args.schedule, p0=args.p0, stuck_patience=args.patience,
                       ratio_bias=args.ratio_bias)
     result = run_simulated_annealing(problem, params, args.seed)
-    out = args.out or Path("output/sa") / args.instance.stem / "single" / (
+    instance_name = args.instance.stem + (f"_trucks{problem.truck_count}" if problem.truck_count > 1 else "")
+    out = args.out or Path("output/sa") / instance_name / "single" / (
         f"{args.schedule}_iter{args.iters}_seed{args.seed}")
     save_sa_run(problem, result, out, f"SA {args.schedule}, iter {args.iters}, seed {args.seed}")
     e = result.extra
@@ -75,6 +80,7 @@ def main(argv: list[str] | None = None) -> None:
 
     ga = sub.add_parser("ga", help="Genetic Algorithm")
     ga.add_argument("--instance", type=Path, required=True)
+    ga.add_argument("--trucks", type=int, help="number of identical trucks (overrides instance)")
     ga.add_argument("--objective", choices=("value", "eta"), default="value")
     ga.add_argument("--pop", type=int, default=50, help="population size")
     ga.add_argument("--gens", type=int, default=100, help="number of generations")
@@ -86,6 +92,7 @@ def main(argv: list[str] | None = None) -> None:
 
     hc = sub.add_parser("hc", help="Hill-Climbing variants")
     hc.add_argument("--instance", type=Path, required=True)
+    hc.add_argument("--trucks", type=int, help="number of identical trucks (overrides instance)")
     hc.add_argument("--objective", choices=("value", "eta"), default="value")
     hc.add_argument(
         "--variant",
@@ -102,6 +109,7 @@ def main(argv: list[str] | None = None) -> None:
 
     sa = sub.add_parser("sa", help="Simulated Annealing")
     sa.add_argument("--instance", type=Path, required=True)
+    sa.add_argument("--trucks", type=int, help="number of identical trucks (overrides instance)")
     sa.add_argument("--objective", choices=("value", "eta"), default="value")
     sa.add_argument("--iters", type=int, default=SAParams.max_iterations)
     sa.add_argument("--t0", type=float, help="initial temperature (default: calibrated from --p0)")

@@ -31,3 +31,9 @@ class Problem:
     truck: Truck
     packages: tuple[Package, ...]
     objective: str = "value"  # "value" | "eta"
+    truck_count: int = 1
+
+    def __post_init__(self):
+        if (not isinstance(self.truck_count, int)
+                or isinstance(self.truck_count, bool) or self.truck_count < 1):
+            raise ValueError("truck_count must be a positive integer")

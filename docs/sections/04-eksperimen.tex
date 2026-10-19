@@ -164,6 +164,59 @@ Objektif ETA mengorbankan 3,8\% total \textit{value} untuk memuat paket dengan r
 ETA lebih kecil (3,70 dibanding 3,95 hari; rata-rata ETA semua paket 4,11). Artinya,
 paket yang lebih mendesak lebih diprioritaskan, sesuai tujuan objektif ini.
 
+\section{Hasil Bonus: Multi-Truk}
+\label{sec:multitruck-hasil}
+
+Armada dua truk identik diuji pada instans \textit{medium} dan \textit{large} dengan
+parameter yang sama seperti eksperimen satu truk (3 \textit{run} per konfigurasi;
+hasilnya ada di \texttt{output/*/medium\_trucks2/} dan \texttt{output/*/large\_trucks2/}).
+HC hanya dijalankan untuk \textit{steepest} dan \textit{stochastic} di \textit{medium}
+karena waktu eksekusinya. Untuk kedua instans, total berat dan volume seluruh paket
+muat di dua truk, sehingga batas atasnya sama dengan total \textit{value} semua paket
+(2608 dan 6194). Seluruh 42 \textit{state} akhir diperiksa ulang dengan pemeriksa
+independen berbasis sel, dan semuanya valid.
+
+\begin{table}[H]
+	\centering
+	\caption{Hasil multi-truk dibanding satu truk (rata-rata 3 \textit{run})}
+	\label{tab:multitruck}
+	\begin{adjustbox}{max width=\textwidth}
+	\begin{tabular}{l l r r r r}
+		\toprule
+		\textbf{Instans} & \textbf{Algoritma} & \textbf{1 truk} & \textbf{2 truk (mean $\pm$ std)} & \textbf{Gap 2 truk (\%)} & \textbf{Durasi 2 truk (s)} \\
+		\midrule
+		\multirow{5}{*}{\textit{medium}} & HC \textit{steepest} & 2213,7 & 2544,3 $\pm$ 6,5 & 2,4 & 48,1 \\
+		& HC \textit{stochastic} & 1469,7 & 1669,0 $\pm$ 168,9 & 36,0 & 0,6 \\
+		& SA (20.000 iterasi, $p_0=0{,}01$) & 2233,3 & 2543,0 $\pm$ 28,0 & 2,5 & 4,6 \\
+		& GA (pop. 50, gen. 100) & 1319,3 & 1608,7 $\pm$ 66,3 & 38,3 & 0,7 \\
+		& GA (pop. 50, gen. 200) & 1477,7 & 1691,7 $\pm$ 68,0 & 35,1 & 1,3 \\
+		\midrule
+		\multirow{3}{*}{\textit{large}} & SA (20.000 iterasi, $p_0=0{,}01$) & 4976,0 & 5921,7 $\pm$ 27,2 & 4,4 & 12,2 \\
+		& GA (pop. 50, gen. 100) & 2115,0 & 2598,7 $\pm$ 47,5 & 58,0 & 1,0 \\
+		& GA (pop. 50, gen. 200) & 2096,3 & 2873,0 $\pm$ 244,4 & 53,6 & 2,2 \\
+		\bottomrule
+	\end{tabular}
+	\end{adjustbox}
+\end{table}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\textwidth]{sa/large_trucks2/geometric_iter20000_p0.01_tmin0.05/seed1/final.png}
+	\caption{\textit{State} akhir SA dengan dua truk (instans \textit{large}, \textit{seed} 1)}
+	\label{fig:multitruck}
+\end{figure}
+
+Dengan dua truk, total \textit{value} yang diangkut naik 14--19\% untuk HC dan SA.
+Kenaikannya tidak 100\% karena sebagian besar paket bernilai tinggi sudah terangkut
+oleh satu truk. Pada \textit{large}, batasnya bukan lagi berat (1589 dari 2400 pada
+Gambar~\ref{fig:multitruck}), melainkan volume dan geometri: paket yang tersisa di luar
+umumnya berukuran besar dengan \textit{value} kecil. HC \textit{steepest} dan SA kini
+hanya 2--4\% dari batas atas. Urutan kinerja algoritma tetap sama seperti pada satu
+truk: SA dan HC \textit{steepest} unggul, sedangkan GA dan HC \textit{stochastic}
+tertinggal jauh karena alasan yang sama (Subbab~\ref{sec:ga-analisis}). Durasi SA
+dan GA hanya naik sedikit, karena biaya per iterasi bergantung pada banyak paket di
+setiap truk, bukan pada banyak truk.
+
 \section{Analisis}
 
 \begin{table}[H]

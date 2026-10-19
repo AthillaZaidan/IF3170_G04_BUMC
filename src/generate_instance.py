@@ -30,7 +30,7 @@ PRESETS = {
 }
 
 
-def generate(size: str, rng: random.Random) -> Problem:
+def generate(size: str, rng: random.Random, truck_count: int = 1) -> Problem:
     preset = PRESETS[size]
     raw = [
         dict(w=rng.randint(1, 5), l=rng.randint(1, 5), h=rng.randint(1, 5),
@@ -43,19 +43,21 @@ def generate(size: str, rng: random.Random) -> Problem:
         Package(id=f"P{i:03d}", **{**r, "weight": max(1, round(r["weight"] * scale))})
         for i, r in enumerate(raw, start=1)
     )
-    return Problem(preset.truck, packages)
+    return Problem(preset.truck, packages, truck_count=truck_count)
 
 
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--size", choices=PRESETS, required=True)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--trucks", type=int, default=1)
     parser.add_argument("--out", type=Path, help="default: data/instances/<size>.json")
     args = parser.parse_args(argv)
 
-    out = args.out or Path("data/instances") / f"{args.size}.json"
+    instance_name = args.size + (f"_trucks{args.trucks}" if args.trucks > 1 else "")
+    out = args.out or Path("data/instances") / f"{instance_name}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
-    problem = generate(args.size, random.Random(args.seed))
+    problem = generate(args.size, random.Random(args.seed), args.trucks)
     save_problem(problem, out)
     print(f"wrote {out}: {len(problem.packages)} packages")
 

@@ -38,12 +38,13 @@ def problem_from_dict(data: dict) -> Problem:
             value=raw["value"], weight=raw["weight"],
             fragile=bool(raw["fragile"]), eta=raw["eta"],
         ))
-    return Problem(truck, tuple(packages))
+    return Problem(truck, tuple(packages), objective=data.get("objective", "value"),
+                   truck_count=data.get("truck_count", 1))
 
 
 def problem_to_dict(problem: Problem) -> dict:
     t = problem.truck
-    return {
+    data = {
         "truck": {"w": t.w, "l": t.l, "h": t.h, "max_capacity": t.max_capacity},
         "packages": [
             {"id": p.id, "w": p.w, "l": p.l, "h": p.h, "value": p.value,
@@ -51,6 +52,11 @@ def problem_to_dict(problem: Problem) -> dict:
             for p in problem.packages
         ],
     }
+    if problem.truck_count != 1:
+        data["truck_count"] = problem.truck_count
+    if problem.objective != "value":
+        data["objective"] = problem.objective
+    return data
 
 
 def load_problem(path: str | Path) -> Problem:
@@ -65,7 +71,8 @@ def state_to_json(problem: Problem, state: State) -> list[dict]:
     """Placements with package ids and the spec's orientation notation."""
     return [
         {"id": pkg.id, "in_truck": p.in_truck, "x": p.x, "y": p.y, "z": p.z,
-         "orientation": dict(zip(("w", "l", "h"), p.orientation))}
+         "orientation": dict(zip(("w", "l", "h"), p.orientation)),
+         **({"truck_id": p.truck_id} if problem.truck_count > 1 else {})}
         for pkg, p in zip(problem.packages, state)
     ]
 
@@ -73,7 +80,8 @@ def state_to_json(problem: Problem, state: State) -> list[dict]:
 def state_from_json(data: list[dict]) -> State:
     return tuple(
         Placement(d["in_truck"], d["x"], d["y"], d["z"],
-                  tuple(d["orientation"][side] for side in ("w", "l", "h")))
+                  tuple(d["orientation"][side] for side in ("w", "l", "h")),
+                  d.get("truck_id", 0))
         for d in data
     )
 
@@ -82,11 +90,14 @@ def save_result(problem: Problem, result: RunResult, path: str | Path) -> None:
     data = asdict(result)
     data["initial_state"] = state_to_json(problem, result.initial_state)
     data["final_state"] = state_to_json(problem, result.final_state)
+    if problem.truck_count > 1:
+        data["problem"] = problem_to_dict(problem)
     Path(path).write_text(json.dumps(data, indent=2) + "\n")
 
 
 def load_result(path: str | Path) -> RunResult:
     data = json.loads(Path(path).read_text())
+    data.pop("problem", None)
     data["initial_state"] = state_from_json(data["initial_state"])
     data["final_state"] = state_from_json(data["final_state"])
     return RunResult(**data)

@@ -1,0 +1,4 @@
+config,schedule,p0,t_min,ratio_bias,iterations,seed,run_seed,initial_value,final_value,upper_bound,gap_to_bound,duration_s,t0,stuck_count,stuck_iterations,accepted_worse,null_moves,best_iteration
+geometric_iter20000_p0.01_tmin0.05,geometric,0.01,0.05,0.0,20000,1,1247023208,2010,5953,6194,0.0389,12.1262,10.392,11,13058,27,1151,19371
+geometric_iter20000_p0.01_tmin0.05,geometric,0.01,0.05,0.0,20000,2,3546104274,1883,5904,6194,0.0468,11.9937,10.772,10,13505,27,1412,17273
+geometric_iter20000_p0.01_tmin0.05,geometric,0.01,0.05,0.0,20000,3,2757390660,2262,5908,6194,0.0462,12.5133,9.996,7,11728,29,1439,13636

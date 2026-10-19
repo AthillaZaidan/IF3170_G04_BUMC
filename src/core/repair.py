@@ -21,12 +21,25 @@ from src.core.state import State, take_out
 
 
 def repair(problem: Problem, state: State) -> State:
+    state = tuple(
+        take_out(p) if p.in_truck and (
+            not isinstance(p.truck_id, int) or isinstance(p.truck_id, bool)
+            or not 0 <= p.truck_id < problem.truck_count
+        ) else p
+        for p in state
+    )
+    for truck_id in range(problem.truck_count):
+        state = _repair_truck(problem, state, truck_id)
+    return state
+
+
+def _repair_truck(problem: Problem, state: State, truck_id: int) -> State:
     packages = problem.packages
     truck = problem.truck
     placements = list(state)
 
     def inside() -> list[int]:
-        return [i for i, p in enumerate(placements) if p.in_truck]
+        return [i for i, p in enumerate(placements) if p.in_truck and p.truck_id == truck_id]
 
     # 1. Walls
     for i in inside():
