@@ -1,4 +1,5 @@
 from pathlib import Path
+import math
 
 import matplotlib
 
@@ -21,7 +22,7 @@ def _stride(n: int) -> int:
 def _temperature_panel(ax, temperature: list[float]) -> None:
     step = _stride(len(temperature))
     ax.plot(range(0, len(temperature), step), temperature[::step],
-            color=TEMPERATURE_COLOR, linewidth=1.5)
+            color=TEMPERATURE_COLOR, linewidth=1.5, marker="o" if len(temperature) == 1 else None)
     ax.set_yscale("log")
     ax.set(xlabel="Iteration", ylabel="Temperature T")
 
@@ -36,7 +37,7 @@ def plot_sa_curve(history: dict[str, list[float]], title: str, path: str | Path)
              linewidth=1, label="current")
     top.plot(iterations, history["best"][::step], color=GA_MEAN_COLOR,
              linewidth=2, label="best so far")
-    top.set(title=title, ylabel="Objective (total value)")
+    top.set(title=title, ylabel="Objective")
     top.legend(loc="lower right")
     _temperature_panel(bottom, history["temperature"])
     fig.tight_layout()
@@ -61,6 +62,13 @@ def plot_eet(history: dict[str, list[float]], title: str, path: str | Path,
         top.legend(loc="upper right")
     top.set(title=title, ylabel=r"$e^{\Delta E / T}$", ylim=(-0.03, 1.03))
     _temperature_panel(bottom, history["temperature"])
+    if "log_eET" in history:
+        top.clear()
+        exponents = [value / math.log(10) for value in history["log_eET"]]
+        step = _stride(len(exponents))
+        top.plot(range(0, len(exponents), step), exponents[::step],
+                 color=GA_MAX_COLOR, linewidth=1, marker="o" if len(exponents) == 1 else None)
+        top.set(title=title, ylabel=r"$\log_{10}(e^{\Delta E / T})$")
     fig.tight_layout()
     fig.savefig(path, dpi=120)
     plt.close(fig)
@@ -71,7 +79,7 @@ def plot_sa_comparison(curves: pd.DataFrame, title: str, path: str | Path) -> No
     fig, ax = plt.subplots(figsize=(9, 5))
     sns.lineplot(data=curves, x="iteration", y="best", hue="config",
                  errorbar=("pi", 100), ax=ax)
-    ax.set(title=title, xlabel="Iteration", ylabel="Best objective (total value)")
+    ax.set(title=title, xlabel="Iteration", ylabel="Best objective")
     fig.tight_layout()
     fig.savefig(path, dpi=120)
     plt.close(fig)

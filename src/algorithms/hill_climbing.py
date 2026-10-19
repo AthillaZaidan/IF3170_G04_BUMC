@@ -9,6 +9,7 @@ from src.core.objective import total_value
 from src.core.repair import repair
 from src.core.result import RunResult
 from src.core.state import State
+from src.core.validation import require_integer
 
 HC_VARIANTS = {"steepest", "stochastic", "sideways", "random-restart"}
 
@@ -22,16 +23,11 @@ class HCParams:
     max_restarts: int = 5
 
     def __post_init__(self):
+        for name in ("max_iterations", "max_sideways", "max_restarts"):
+            require_integer(getattr(self, name), name)
+        require_integer(self.neighbor_samples, "neighbor_samples", 1)
         if self.variant not in HC_VARIANTS:
             raise ValueError(f"variant must be one of {sorted(HC_VARIANTS)}")
-        if self.max_iterations < 0:
-            raise ValueError("max_iterations must be >= 0")
-        if self.neighbor_samples <= 0:
-            raise ValueError("neighbor_samples must be > 0")
-        if self.max_sideways < 0:
-            raise ValueError("max_sideways must be >= 0")
-        if self.max_restarts < 0:
-            raise ValueError("max_restarts must be >= 0")
 
 
 @dataclass(frozen=True)
@@ -94,7 +90,20 @@ def _random_improving_neighbor(
         candidate_state, candidate_value = _repair_value(problem, neighbor)
         if candidate_state != state and candidate_value > current_value:
             improving.append(_Candidate(candidate_state, candidate_value, move))
-    return rng.choice(improving) if improving else None
+    if improving:
+        return rng.choice(improving)
+    chosen = None
+    count = 0
+    seen = set()
+    for neighbor, move in all_neighbors(problem, state):
+        candidate_state, candidate_value = _repair_value(problem, neighbor)
+        if candidate_state in seen or candidate_value <= current_value:
+            continue
+        seen.add(candidate_state)
+        count += 1
+        if rng.randrange(count) == 0:
+            chosen = _Candidate(candidate_state, candidate_value, move)
+    return chosen
 
 
 def _run_single_climb(
@@ -139,9 +148,6 @@ def _run_single_climb(
                 if sideways_moves >= params.max_sideways:
                     stop_reason = "max_sideways"
                     break
-                if candidate.state in seen:
-                    stop_reason = "plateau_cycle"
-                    break
                 sideways_moves += 1
 
         current, current_value = candidate.state, candidate.value
@@ -149,6 +155,9 @@ def _run_single_climb(
         best_value = max(best_value, current_value)
         values.append(current_value)
         best_values.append(best_value)
+        if variant == "sideways" and sideways_moves > 0 and sideways_moves >= params.max_sideways:
+            stop_reason = "max_sideways"
+            break
     return _ClimbOutcome(
         initial_state=initial_state,
         initial_value=values[0],
@@ -171,6 +180,8 @@ def _run_random_restart(problem: Problem, params: HCParams, seed: int) -> RunRes
     stop_reasons: list[str] = []
     values: list[int] = []
     best_history: list[int] = []
+    iteration_history: list[int] = []
+    iterations = 0
     best_outcome: _ClimbOutcome | None = None
     best_restart = 0
     first_outcome: _ClimbOutcome | None = None
@@ -194,6 +205,8 @@ def _run_random_restart(problem: Problem, params: HCParams, seed: int) -> RunRes
             global_best = value if global_best is None else max(global_best, value)
             values.append(value)
             best_history.append(global_best)
+        iteration_history.extend(range(iterations, iterations + len(outcome.values)))
+        iterations += outcome.iterations
 
     assert first_outcome is not None and best_outcome is not None
     return RunResult(
@@ -205,9 +218,11 @@ def _run_random_restart(problem: Problem, params: HCParams, seed: int) -> RunRes
         initial_value=first_outcome.initial_value,
         final_state=best_outcome.final_state,
         final_value=best_outcome.final_value,
-        history={"value": values, "best": best_history},
+        history={"value": values, "best": best_history, "iteration": iteration_history},
         extra={
             "restarts": params.max_restarts,
+            "iterations": iterations,
+            "stop_reason": "max_restarts",
             "iterations_per_restart": iterations_per_restart,
             "initial_values": initial_values,
             "restart_offsets": restart_offsets,

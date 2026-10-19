@@ -37,6 +37,7 @@ def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="GA population/generation experiment")
     parser.add_argument("--instance", type=Path, required=True)
     parser.add_argument("--trucks", type=int)
+    parser.add_argument("--objective", choices=("value", "eta"))
     parser.add_argument("--out", type=Path, default=Path("output/ga"))
     parser.add_argument("--control-pop", type=int, default=50)
     parser.add_argument("--gens-list", type=int, nargs="+", default=[50, 100, 200])
@@ -50,7 +51,11 @@ def main(argv: list[str] | None = None) -> None:
     problem = load_problem(args.instance)
     if args.trucks is not None:
         problem = replace(problem, truck_count=args.trucks)
+    if args.objective is not None:
+        problem = replace(problem, objective=args.objective)
     instance_name = args.instance.stem + (f"_trucks{problem.truck_count}" if problem.truck_count > 1 else "")
+    if problem.objective != "value":
+        instance_name += f"_{problem.objective}"
     root = args.out / instance_name
     groups = {
         "generations": [(args.control_pop, g) for g in args.gens_list],
@@ -74,6 +79,7 @@ def main(argv: list[str] | None = None) -> None:
                 result = results[key]
                 rows.append({
                     "group": group, "config": config_name(pop, gens),
+                    "objective": problem.objective, "truck_count": problem.truck_count,
                     "population": pop, "generations": gens, "seed": seed,
                     "run_seed": result.seed,
                     "initial_value": result.initial_value,

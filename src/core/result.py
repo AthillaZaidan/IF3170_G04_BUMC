@@ -12,8 +12,8 @@ class RunResult:
     seed: int
     duration_s: float
     initial_state: State
-    initial_value: int
+    initial_value: float
     final_state: State
-    final_value: int
+    final_value: float
     history: dict[str, list[float]]  # e.g. {"max": [...], "mean": [...]} per iteration
     extra: dict = field(default_factory=dict)  # algorithm-specific numbers

@@ -101,6 +101,8 @@ def random_neighbor(problem: Problem, state: State,
     package goes out with probability 0.2, otherwise to a random_position.
     """
     n = len(state)
+    if not n:
+        raise ValueError("cannot generate a neighbor for an empty state")
     kind = rng.choice(("move", "rotate", "swap") if n >= 2 else ("move", "rotate"))
     if kind == "rotate":
         i, axis = rng.randrange(n), rng.choice(AXES)
@@ -122,7 +124,7 @@ def random_neighbor(problem: Problem, state: State,
 def sample_neighbors(problem: Problem, state: State, k: int,
                      rng: random.Random) -> list[tuple[State, Move]]:
     """k random successors, for a practical steepest-ascent variant."""
-    return [random_neighbor(problem, state, rng) for _ in range(k)]
+    return [random_neighbor(problem, state, rng) for _ in range(k)] if state else []
 
 
 def all_neighbors(problem: Problem, state: State) -> Iterator[tuple[State, Move]]:

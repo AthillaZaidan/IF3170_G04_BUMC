@@ -21,6 +21,8 @@ from src.core.state import State, take_out
 
 
 def repair(problem: Problem, state: State) -> State:
+    if len(state) != len(problem.packages):
+        raise ValueError("state must contain one placement per package")
     state = tuple(
         take_out(p) if p.in_truck and (
             not isinstance(p.truck_id, int) or isinstance(p.truck_id, bool)

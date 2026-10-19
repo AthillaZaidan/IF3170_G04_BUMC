@@ -23,6 +23,7 @@ def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Hill-Climbing variants, several seeds each")
     parser.add_argument("--instance", type=Path, required=True)
     parser.add_argument("--trucks", type=int)
+    parser.add_argument("--objective", choices=("value", "eta"))
     parser.add_argument("--out", type=Path, default=Path("output/hc"))
     parser.add_argument("--variants", nargs="+", choices=VARIANTS, default=VARIANTS)
     parser.add_argument("--iters", type=int, default=100)
@@ -35,8 +36,12 @@ def main(argv: list[str] | None = None) -> None:
     problem = load_problem(args.instance)
     if args.trucks is not None:
         problem = replace(problem, truck_count=args.trucks)
+    if args.objective is not None:
+        problem = replace(problem, objective=args.objective)
     bound = value_upper_bound(problem)
     instance_name = args.instance.stem + (f"_trucks{problem.truck_count}" if problem.truck_count > 1 else "")
+    if problem.objective != "value":
+        instance_name += f"_{problem.objective}"
     root = args.out / instance_name
     params = HCParams(max_iterations=args.iters, neighbor_samples=args.samples,
                       max_sideways=args.max_sideways, max_restarts=args.max_restarts)
@@ -51,6 +56,7 @@ def main(argv: list[str] | None = None) -> None:
                   f"({result.duration_s:.2f}s)")
             rows.append({
                 "config": variant, "seed": seed, "run_seed": result.seed,
+                "objective": problem.objective, "truck_count": problem.truck_count,
                 "initial_value": result.initial_value, "final_value": result.final_value,
                 "upper_bound": bound,
                 "gap_to_bound": round(1 - result.final_value / bound, 4) if bound else 0,
@@ -62,7 +68,7 @@ def main(argv: list[str] | None = None) -> None:
     summary = pd.DataFrame(rows)
     root.mkdir(parents=True, exist_ok=True)
     summary.to_csv(root / "summary.csv", index=False)
-    plot_metric_box(summary, "final_value", "Final objective (total value)",
+    plot_metric_box(summary, "final_value", "Final objective",
                     "Final objective per HC variant", root / "final_value_box.png")
 
     print(f"\nupper bound {bound}")

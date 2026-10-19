@@ -1,5 +1,6 @@
 """JSON input/output for problem instances, states and run results."""
 import json
+import math
 from pathlib import Path
 
 from dataclasses import asdict
@@ -7,6 +8,8 @@ from dataclasses import asdict
 from src.core.models import Package, Problem, Truck
 from src.core.result import RunResult
 from src.core.state import Placement, State
+from src.core.constraints import is_feasible
+from src.core.objective import total_value
 
 _POSITIVE_INT_FIELDS = {
     "truck": ("w", "l", "h", "max_capacity"),
@@ -24,10 +27,18 @@ def _require_positive_ints(obj: dict, fields: tuple[str, ...], where: str) -> No
 
 
 def problem_from_dict(data: dict) -> Problem:
+    if not isinstance(data, dict):
+        raise ValueError("instance must be a JSON object")
+    if not isinstance(data.get("truck"), dict):
+        raise ValueError("truck must be a JSON object")
+    if not isinstance(data.get("packages"), list):
+        raise ValueError("packages must be a JSON array")
     _require_positive_ints(data["truck"], _POSITIVE_INT_FIELDS["truck"], "truck")
     truck = Truck(**{k: data["truck"][k] for k in ("w", "l", "h", "max_capacity")})
     packages, seen = [], set()
     for raw in data["packages"]:
+        if not isinstance(raw, dict):
+            raise ValueError("each package must be a JSON object")
         where = f"package {raw.get('id', '?')}"
         _require_positive_ints(raw, _POSITIVE_INT_FIELDS["package"], where)
         if raw["id"] in seen:
@@ -36,7 +47,7 @@ def problem_from_dict(data: dict) -> Problem:
         packages.append(Package(
             id=raw["id"], w=raw["w"], l=raw["l"], h=raw["h"],
             value=raw["value"], weight=raw["weight"],
-            fragile=bool(raw["fragile"]), eta=raw["eta"],
+            fragile=raw["fragile"], eta=raw["eta"],
         ))
     return Problem(truck, tuple(packages), objective=data.get("objective", "value"),
                    truck_count=data.get("truck_count", 1))
@@ -69,6 +80,8 @@ def save_problem(problem: Problem, path: str | Path) -> None:
 
 def state_to_json(problem: Problem, state: State) -> list[dict]:
     """Placements with package ids and the spec's orientation notation."""
+    if len(state) != len(problem.packages):
+        raise ValueError("state must contain one placement per package")
     return [
         {"id": pkg.id, "in_truck": p.in_truck, "x": p.x, "y": p.y, "z": p.z,
          "orientation": dict(zip(("w", "l", "h"), p.orientation)),
@@ -87,17 +100,23 @@ def state_from_json(data: list[dict]) -> State:
 
 
 def save_result(problem: Problem, result: RunResult, path: str | Path) -> None:
+    for prefix in ("initial", "final"):
+        state = getattr(result, f"{prefix}_state")
+        value = getattr(result, f"{prefix}_value")
+        if not is_feasible(problem, state) or not math.isclose(total_value(problem, state), value, rel_tol=1e-9):
+            raise ValueError(f"{prefix} state or objective is invalid")
     data = asdict(result)
     data["initial_state"] = state_to_json(problem, result.initial_state)
     data["final_state"] = state_to_json(problem, result.final_state)
-    if problem.truck_count > 1:
-        data["problem"] = problem_to_dict(problem)
-    Path(path).write_text(json.dumps(data, indent=2) + "\n")
+    data["problem"] = problem_to_dict(problem)
+    Path(path).write_text(json.dumps(data, indent=2, allow_nan=False) + "\n")
 
 
 def load_result(path: str | Path) -> RunResult:
     data = json.loads(Path(path).read_text())
     data.pop("problem", None)
+    data.pop("source_sha256", None)
+    data.pop("schema_version", None)
     data["initial_state"] = state_from_json(data["initial_state"])
     data["final_state"] = state_from_json(data["final_state"])
     return RunResult(**data)

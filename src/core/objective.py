@@ -12,7 +12,7 @@ from src.core.state import State
 
 @dataclass(frozen=True)
 class Evaluation:
-    value: int
+    value: float
     violations: tuple[Violation, ...]
     score: float
 
@@ -29,6 +29,8 @@ def default_penalty(problem: Problem) -> int:
 
 # Objective "eta" (bonus): value / ETA, so a package due sooner counts for more.
 def total_value(problem: Problem, state: State) -> float:
+    if len(state) != len(problem.packages):
+        raise ValueError("state must contain one placement per package")
     if problem.objective == "eta":
         return sum(pkg.value / pkg.eta for pkg, p in zip(problem.packages, state) if p.in_truck)
     return sum(pkg.value for pkg, p in zip(problem.packages, state) if p.in_truck)

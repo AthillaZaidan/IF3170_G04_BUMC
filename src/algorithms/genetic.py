@@ -10,6 +10,7 @@ from src.core.neighbors import random_neighbor
 from src.core.objective import total_value
 from src.core.repair import repair
 from src.core.result import RunResult
+from src.core.validation import require_integer, require_number
 
 T = TypeVar("T")
 
@@ -22,13 +23,11 @@ class GAParams:
     elitism: int = 1
 
     def __post_init__(self):
-        if self.population_size < 2:
-            raise ValueError("population_size must be at least 2")
-        if self.generations < 0:
-            raise ValueError("generations must be >= 0")
-        if not 0 <= self.mutation_rate <= 1:
-            raise ValueError("mutation_rate must be in [0, 1]")
-        if not 0 <= self.elitism < self.population_size:
+        require_integer(self.population_size, "population_size", 2)
+        require_integer(self.generations, "generations")
+        require_integer(self.elitism, "elitism")
+        require_number(self.mutation_rate, "mutation_rate", 0, 1)
+        if self.elitism >= self.population_size:
             raise ValueError("elitism must be in [0, population_size)")
 
 
@@ -74,7 +73,7 @@ def run_genetic(problem: Problem, params: GAParams, seed: int) -> RunResult:
             p1 = roulette_select(population, fitness, rng)
             p2 = roulette_select(population, fitness, rng)
             for child in single_point_crossover(p1, p2, rng):
-                if rng.random() < params.mutation_rate:
+                if child and rng.random() < params.mutation_rate:
                     child, _ = random_neighbor(problem, child, rng)
                 next_population.append(repair(problem, child))
         population = next_population[:params.population_size]

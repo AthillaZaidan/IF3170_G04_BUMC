@@ -16,9 +16,6 @@ from src.core.objective import total_value
 from src.core.orientation import extents
 from src.core.state import State
 
-MAX_OUTSIDE_LINES = 45
-
-
 def _faces(b: Box) -> list[list[tuple[int, int, int]]]:
     x0, y0, z0, x1, y1, z1 = b
     corners = [(x0, y0, z0), (x1, y0, z0), (x1, y1, z0), (x0, y1, z0),
@@ -39,7 +36,9 @@ def render_state(problem: Problem, state: State, title: str, path: str | Path) -
     truck = problem.truck
     columns = min(problem.truck_count, 3)
     rows = ceil(problem.truck_count / columns)
-    fig = plt.figure(figsize=(15 if columns > 1 else 13, max(7, rows * 4.5 + 1.5)))
+    outside_count = sum(not p.in_truck for p in state)
+    height = max(7, rows * 4.5 + 1.5, outside_count * 0.13 + 2.5)
+    fig = plt.figure(figsize=(15 if columns > 1 else 13, height))
     grid = fig.add_gridspec(rows, columns, left=0.03, right=0.72,
                             bottom=0.05, top=0.81, wspace=0.15, hspace=0.3)
     side = fig.add_axes((0.77, 0.02, 0.22, 0.8))
@@ -72,20 +71,22 @@ def render_state(problem: Problem, state: State, title: str, path: str | Path) -
         ax.view_init(elev=22, azim=-58)
 
     weight = sum(p.weight for p in inside)
+    value_label = f"Value = {total_value(problem, state):g}"
+    if problem.objective == "eta":
+        value_label = (f"Objective (value/ETA) = {total_value(problem, state):.4g} | "
+                       f"Total value = {sum(p.value for p in inside):g}")
     fig.suptitle(
-        f"{title}\nValue = {total_value(problem, state)}  |  "
+        f"{title}\n{value_label}  |  "
         f"Weight {weight}/{truck.max_capacity * problem.truck_count}  |  "
         f"{len(inside)} inside, {len(outside)} outside  |  red edge = fragile",
         fontsize=11,
     )
 
     lines = [f"Outside the fleet ({len(outside)}):"]
-    for package, placement in outside[:MAX_OUTSIDE_LINES]:
+    for package, placement in outside:
         dx, dy, dz = extents(package, placement.orientation)
         flag = " F" if package.fragile else ""
         lines.append(f"{package.id} {dx}x{dy}x{dz} v={package.value} w={package.weight}{flag}")
-    if len(outside) > MAX_OUTSIDE_LINES:
-        lines.append(f"... and {len(outside) - MAX_OUTSIDE_LINES} more")
     side.text(0, 1, "\n".join(lines), va="top", family="monospace", fontsize=7)
 
     fig.savefig(path, dpi=120)

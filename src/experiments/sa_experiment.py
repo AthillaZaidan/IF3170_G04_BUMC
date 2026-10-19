@@ -42,6 +42,7 @@ def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Simulated Annealing experiment grid")
     parser.add_argument("--instance", type=Path, required=True)
     parser.add_argument("--trucks", type=int)
+    parser.add_argument("--objective", choices=("value", "eta"))
     parser.add_argument("--out", type=Path, default=Path("output/sa"))
     parser.add_argument("--iterations", type=int, nargs="+", default=[20000])
     parser.add_argument("--schedules", nargs="+", choices=SCHEDULES, default=["geometric"])
@@ -55,8 +56,12 @@ def main(argv: list[str] | None = None) -> None:
     problem = load_problem(args.instance)
     if args.trucks is not None:
         problem = replace(problem, truck_count=args.trucks)
+    if args.objective is not None:
+        problem = replace(problem, objective=args.objective)
     bound = value_upper_bound(problem)
     instance_name = args.instance.stem + (f"_trucks{problem.truck_count}" if problem.truck_count > 1 else "")
+    if problem.objective != "value":
+        instance_name += f"_{problem.objective}"
     root = args.out / instance_name
     rows, curves = [], []
     grid = [(s, p, t, n, b) for s in args.schedules for p in args.p0
@@ -75,6 +80,7 @@ def main(argv: list[str] | None = None) -> None:
                   f"(stuck {e['stuck_count']}, {result.duration_s:.2f}s)")
             rows.append({
                 "config": config, "schedule": schedule, "p0": p0, "t_min": t_min,
+                "objective": problem.objective, "truck_count": problem.truck_count,
                 "ratio_bias": ratio_bias, "iterations": iterations, "seed": seed,
                 "run_seed": result.seed,
                 "initial_value": result.initial_value,
@@ -98,7 +104,7 @@ def main(argv: list[str] | None = None) -> None:
     summary.to_csv(root / "summary.csv", index=False)
     plot_sa_comparison(pd.DataFrame(curves), "Best objective per configuration",
                        root / "compare_best.png")
-    plot_metric_box(summary, "final_value", "Final objective (total value)",
+    plot_metric_box(summary, "final_value", "Final objective",
                     "Final objective per configuration", root / "final_value_box.png")
     plot_metric_box(summary, "stuck_count", "Times stuck in a local optimum",
                     "Stuck frequency per configuration", root / "stuck_count_box.png")

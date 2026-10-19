@@ -14,6 +14,8 @@ class Violation:
 
 
 def find_violations(problem: Problem, state: State) -> list[Violation]:
+    if len(state) != len(problem.packages):
+        return [Violation("state", ())]
     found = []
     groups = [[] for _ in range(problem.truck_count)]
     for i, p in enumerate(state):

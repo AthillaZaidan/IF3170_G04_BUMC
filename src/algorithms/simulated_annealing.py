@@ -10,6 +10,7 @@ from src.core.objective import total_value
 from src.core.repair import repair
 from src.core.result import RunResult
 from src.core.state import State
+from src.core.validation import require_integer, require_number
 
 SCHEDULES = ("geometric", "linear")
 
@@ -26,8 +27,12 @@ class SAParams:
     ratio_bias: float = 0.0
 
     def __post_init__(self):
-        if self.max_iterations < 1:
-            raise ValueError("max_iterations must be >= 1")
+        for name in ("max_iterations", "calibration_samples", "stuck_patience"):
+            require_integer(getattr(self, name), name, 1)
+        for name in ("t_min", "p0", "ratio_bias"):
+            require_number(getattr(self, name), name)
+        if self.t0 is not None:
+            require_number(self.t0, "t0")
         if self.schedule not in SCHEDULES:
             raise ValueError(f"schedule must be one of {SCHEDULES}")
         if self.t_min <= 0:
@@ -36,10 +41,6 @@ class SAParams:
             raise ValueError("t0 must be greater than t_min")
         if not 0 < self.p0 < 1:
             raise ValueError("p0 must be in (0, 1)")
-        if self.calibration_samples < 1:
-            raise ValueError("calibration_samples must be >= 1")
-        if self.stuck_patience < 1:
-            raise ValueError("stuck_patience must be >= 1")
         if not 0 <= self.ratio_bias <= 1:
             raise ValueError("ratio_bias must be in [0, 1]")
 
@@ -54,14 +55,15 @@ def acceptance_probability(delta: float, t: float) -> float:
 # Temperature at iteration k of n: t0 at k = 0 and t_min at k = n.
 def temperature(k: int, n: int, t0: float, t_min: float, schedule: str) -> float:
     frac = k / n
+    if k == 0:
+        return t0
+    if k == n:
+        return t_min
     if schedule == "geometric":
-        return t0 * (t_min / t0) ** frac
-    return t0 + (t_min - t0) * frac
-
-
-# 4 significant digits keep result.json small and are enough for the plots.
-def _rounded(x: float) -> float:
-    return float(f"{x:.4g}")
+        value = math.exp(math.log(t0) + frac * (math.log(t_min) - math.log(t0)))
+    else:
+        value = t_min + (t0 - t_min) * (1 - frac)
+    return min(t0, max(t_min, value))
 
 
 # Swap a low value/weight package inside with a high one outside (random move if a side is empty).
@@ -79,6 +81,8 @@ def ratio_swap(problem: Problem, state: State, rng: random.Random) -> tuple[Stat
 # One repaired successor and its value; a ratio swap with probability ratio_bias.
 def _neighbor(problem: Problem, state: State, rng: random.Random,
               ratio_bias: float = 0.0) -> tuple[State, int]:
+    if not state:
+        return state, 0
     if ratio_bias > 0 and rng.random() < ratio_bias:
         candidate, _ = ratio_swap(problem, state, rng)
     else:
@@ -114,19 +118,23 @@ def run_simulated_annealing(problem: Problem, params: SAParams, seed: int) -> Ru
     if params.t0 is None:
         t0, mean_worse = calibrate_t0(problem, current, params.p0,
                                       params.calibration_samples, rng)
+        if t0 <= params.t_min:
+            t0 = math.nextafter(params.t_min, math.inf)
+        require_number(t0, "calibrated t0")
     else:
         t0, mean_worse = params.t0, None
-    t_min = min(params.t_min, t0 / 2)
+    t_min = params.t_min
     n = params.max_iterations
 
     best_state, best_value, best_iteration = current, current_value, 0
     history = {"value": [current_value], "best": [current_value],
-               "temperature": [], "eET": []}
+               "temperature": [], "eET": [], "log_eET": []}
     accepted = accepted_worse = null_moves = 0
     plateau = stuck_count = stuck_iterations = 0
+    schedule_steps = max(n - 1, 1)
 
     for k in range(n):
-        t = temperature(k, n, t0, t_min, params.schedule)
+        t = temperature(k, schedule_steps, t0, t_min, params.schedule)
         candidate, candidate_value = _neighbor(problem, current, rng, params.ratio_bias)
         delta = candidate_value - current_value
         # Metropolis rule: accept dE >= 0, otherwise with probability e^(dE/T).
@@ -154,8 +162,9 @@ def run_simulated_annealing(problem: Problem, params: SAParams, seed: int) -> Ru
             best_state, best_value, best_iteration = current, current_value, k + 1
         history["value"].append(current_value)
         history["best"].append(best_value)
-        history["temperature"].append(_rounded(t))
-        history["eET"].append(_rounded(p))
+        history["temperature"].append(t)
+        history["eET"].append(p)
+        history["log_eET"].append(delta / t)
 
     return RunResult(
         algorithm="sa",
@@ -169,10 +178,12 @@ def run_simulated_annealing(problem: Problem, params: SAParams, seed: int) -> Ru
         history=history,
         extra={
             "t0": t0, "t_min": t_min, "mean_worse_delta": mean_worse,
-            "alpha": (t_min / t0) ** (1 / n) if params.schedule == "geometric" else None,
+            "alpha": math.exp((math.log(t_min) - math.log(t0)) / schedule_steps)
+            if params.schedule == "geometric" else None,
             "accepted": accepted, "rejected": n - accepted,
             "accepted_worse": accepted_worse, "null_moves": null_moves,
             "stuck_count": stuck_count, "stuck_iterations": stuck_iterations,
+            "stuck_definition": "unchanged_objective_for_stuck_patience_proposals",
             "best_iteration": best_iteration, "final_current_value": current_value,
         },
     )
