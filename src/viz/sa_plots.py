@@ -46,12 +46,14 @@ def plot_sa_curve(history: dict[str, list[float]], title: str, path: str | Path)
 
 
 # e^(dE/T) of every worse move and its rolling mean; better moves (probability 1) are left out.
-def plot_eet(history: dict[str, list[float]], title: str, path: str | Path,
-             window: int = 200) -> None:
+def _eet_figure(history: dict[str, list[float]], title: str, window: int = 200):
     eet = pd.Series(history["eET"])
     worse = eet[eet < 1.0]
-    fig, (top, bottom) = plt.subplots(
-        2, 1, figsize=(9, 6), sharex=True, gridspec_kw={"height_ratios": (3, 1)})
+    has_log = "log_eET" in history
+    fig, axes = plt.subplots(
+        3 if has_log else 2, 1, figsize=(9, 8 if has_log else 6), sharex=True,
+        gridspec_kw={"height_ratios": (3, 2, 1) if has_log else (3, 1)})
+    top = axes[0]
     if len(worse):
         shown = worse.iloc[::_stride(len(worse))]
         top.scatter(shown.index, shown.values, s=8, alpha=0.35, color=GA_MAX_COLOR,
@@ -61,15 +63,22 @@ def plot_eet(history: dict[str, list[float]], title: str, path: str | Path,
                  label=f"rolling mean ({window} worse moves)")
         top.legend(loc="upper right")
     top.set(title=title, ylabel=r"$e^{\Delta E / T}$", ylim=(-0.03, 1.03))
-    _temperature_panel(bottom, history["temperature"])
-    if "log_eET" in history:
-        top.clear()
-        exponents = [value / math.log(10) for value in history["log_eET"]]
-        step = _stride(len(exponents))
-        top.plot(range(0, len(exponents), step), exponents[::step],
-                 color=GA_MAX_COLOR, linewidth=1, marker="o" if len(exponents) == 1 else None)
-        top.set(title=title, ylabel=r"$\log_{10}(e^{\Delta E / T})$")
+    if has_log:
+        exponents = pd.Series(history["log_eET"]) / math.log(10)
+        worse_log = exponents[exponents < 0]
+        if len(worse_log):
+            shown = worse_log.iloc[::_stride(len(worse_log))]
+            axes[1].scatter(shown.index, shown.values, s=8, alpha=0.35, color=GA_MAX_COLOR,
+                            linewidths=0)
+        axes[1].set(ylabel=r"$\log_{10} e^{\Delta E / T}$")
+    _temperature_panel(axes[-1], history["temperature"])
     fig.tight_layout()
+    return fig
+
+
+def plot_eet(history: dict[str, list[float]], title: str, path: str | Path,
+             window: int = 200) -> None:
+    fig = _eet_figure(history, title, window)
     fig.savefig(path, dpi=120)
     plt.close(fig)
 

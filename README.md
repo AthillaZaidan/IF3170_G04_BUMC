@@ -55,8 +55,16 @@ tests/           unit test (pytest)
 Membutuhkan Python 3.10 atau lebih baru.
 
 ```bash
+# Linux / macOS
 python3 -m venv .venv
 source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+```powershell
+# Windows (PowerShell)
+python -m venv .venv
+.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 
@@ -80,6 +88,7 @@ mengganti folder keluaran.
 ```bash
 # Hill-Climbing (varian: steepest, stochastic, sideways, random-restart)
 python -m src.main hc --instance data/instances/medium.json --variant steepest --iters 100 --seed 1
+python -m src.main hc --instance data/instances/medium.json --variant stochastic --samples 50 --seed 1
 python -m src.main hc --instance data/instances/medium.json --variant sideways --max-sideways 20 --seed 1
 python -m src.main hc --instance data/instances/medium.json --variant random-restart --max-restarts 5 --seed 1
 
@@ -155,7 +164,7 @@ cd docs && latexmk -pdf main.tex
 ## Heuristik Simulated Annealing
 
 Implementasi: `src/algorithms/simulated_annealing.py`. Setiap iterasi mengambil satu tetangga acak; jika
-`dE > 0` tetangga diterima, jika tidak diterima dengan peluang `e^(dE/T)`.
+`dE >= 0` tetangga diterima, jika tidak diterima dengan peluang `e^(dE/T)`.
 
 ```bash
 # eksperimen SA: grid schedule x p0 x t_min x iterasi x ratio_bias, 5 seed per konfigurasi
@@ -168,7 +177,7 @@ konfigurasi yang berbeda adalah run yang saling bebas, sama seperti eksperimen G
 `--schedules geometric linear`, `--t-min`, `--patience`, `--seeds`, dan `--out` (default `output/sa`).
 
 Setiap run menyimpan `result.json`, `initial.png`, `final.png`, `curve.png` (objective dan suhu per
-iterasi) dan `eet.png` (`e^(dE/T)` per iterasi). Eksperimen juga menyimpan `summary.csv` (termasuk
+iterasi) dan `eet.png` (`e^(dE/T)` setiap langkah memburuk, ditambah panel `log10` karena `e^(dE/T)` mendekati 0 saat suhu rendah). Eksperimen juga menyimpan `summary.csv` (termasuk
 `gap_to_bound` dan `stuck_count`), `compare_best.png`, `final_value_box.png`, dan `stuck_count_box.png`.
 
 Heuristik yang dipakai:
