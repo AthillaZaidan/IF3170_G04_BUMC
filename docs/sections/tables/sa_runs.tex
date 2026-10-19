@@ -1,0 +1,23 @@
+\begin{table}[H]\centering\small
+\caption{Hasil setiap \textit{run} Simulated Annealing (geometrik, 20.000 iterasi, $p_0=0{,}01$, $T_{\min}=0{,}05$)}\label{tab:sa-runs}
+\begin{adjustbox}{max width=\textwidth}\begin{tabular}{c r r r r r r r}
+\toprule
+\textbf{Seed} & \textbf{Awal} & \textbf{Akhir} & \textbf{Gap (\%)} & \textbf{Durasi (s)} & \textbf{$T_0$} & \textbf{Stuck} & \textbf{Iterasi terbaik} \\
+\midrule
+\multicolumn{8}{l}{\textit{small} (batas atas 734)} \\
+1 & 244 & 734 & 0.0 & 4.62 & 9.28 & 4 & 11860 \\
+2 & 94 & 734 & 0.0 & 4.75 & 9.19 & 1 & 776 \\
+3 & 289 & 734 & 0.0 & 4.53 & 15.12 & 3 & 8718 \\
+\midrule
+\multicolumn{8}{l}{\textit{medium} (batas atas 2384)} \\
+1 & 899 & 2248 & 5.7 & 23.12 & 12.47 & 4 & 12907 \\
+2 & 710 & 2209 & 7.3 & 23.24 & 12.08 & 7 & 19857 \\
+3 & 639 & 2243 & 5.9 & 22.75 & 9.83 & 8 & 15616 \\
+\midrule
+\multicolumn{8}{l}{\textit{large} (batas atas 5633)} \\
+1 & 1669 & 4932 & 12.4 & 21.09 & 11.17 & 7 & 18777 \\
+2 & 1505 & 4943 & 12.2 & 21.87 & 8.11 & 11 & 18974 \\
+3 & 1433 & 5053 & 10.3 & 21.56 & 9.66 & 7 & 16325 \\
+\bottomrule
+\end{tabular}\end{adjustbox}
+\end{table}

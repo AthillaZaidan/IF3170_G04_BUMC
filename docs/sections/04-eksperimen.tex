@@ -1,0 +1,309 @@
+\section{Metodologi Eksperimen}
+
+Setiap konfigurasi dijalankan 3 kali (\textit{seed} 1, 2, 3) pada ketiga instans.
+Setiap pasangan (konfigurasi, \textit{seed}) mendapat \textit{seed} acak tersendiri yang
+diturunkan dari nama konfigurasinya (\texttt{run\_seed}). Dengan demikian, misalnya,
+GA 50 generasi bukan potongan awal dari GA 200 generasi, dan setiap \textit{run}
+dapat direproduksi persis. Durasi diukur dengan \texttt{time.perf\_counter} untuk satu
+\textit{run} dalam satu proses Python. Seluruh angka pada bab ini diambil dari
+\texttt{output/*/*/summary.csv}. Folder setiap \textit{run} berisi \textit{state} awal
+dan akhir (JSON dan gambar 3D) serta plot objektif terhadap iterasi.
+
+Kolom \textbf{gap} adalah $1-f(s)/\text{batas atas}$ (Subbab~\ref{sec:bound}), yaitu
+batas atas jarak hasil ke optimum global. Gap 0\% berarti hasilnya terbukti optimum global.
+
+\section{Hasil Hill-Climbing}
+
+Tabel~\ref{tab:hc-summary} merangkum keempat varian. Hasil setiap \textit{run}, termasuk
+banyak iterasi, alasan berhenti, serta banyak \textit{restart} dan iterasi per
+\textit{restart}, ada pada Tabel~\ref{tab:hc-runs}.
+
+\input{sections/tables/hc_summary}
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{hc/medium/steepest/seed1/curve.png}
+		\caption{\textit{Steepest-ascent}}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{hc/medium/random-restart/seed1/curve.png}
+		\caption{\textit{Random-restart}}
+	\end{subfigure}
+	\caption{Nilai objektif terhadap iterasi Hill-Climbing (instans \textit{medium}, \textit{seed} 1)}
+	\label{fig:hc-curve}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.75\textwidth]{hc/large/final_value_box.png}
+	\caption{Sebaran nilai akhir varian Hill-Climbing (instans \textit{large})}
+	\label{fig:hc-box}
+\end{figure}
+
+\input{sections/tables/hc_runs}
+
+\section{Hasil Simulated Annealing}
+
+Konfigurasi utama SA memakai jadwal geometrik, 20.000 iterasi, $p_0=0{,}01$, dan
+$T_{\min}=0{,}05$ (Tabel~\ref{tab:sa-runs}). Gambar~\ref{fig:sa-curve} menunjukkan
+plot objektif dan $e^{\Delta E/T}$ terhadap iterasi. Kolom \textbf{Stuck} adalah
+frekuensi SA \textit{stuck} di \textit{local optimum}, yaitu banyaknya \textit{plateau}
+dengan nilai objektif tidak berubah selama minimal 500 iterasi.
+
+\input{sections/tables/sa_runs}
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{sa/medium/geometric_iter20000_p0.01_tmin0.05/seed1/curve.png}
+		\caption{Nilai objektif dan suhu}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{sa/medium/geometric_iter20000_p0.01_tmin0.05/seed1/eet.png}
+		\caption{$e^{\Delta E/T}$}
+	\end{subfigure}
+	\caption{Simulated Annealing pada instans \textit{medium} (\textit{seed} 1)}
+	\label{fig:sa-curve}
+\end{figure}
+
+Parameter SA juga diuji pada instans \textit{medium}, satu parameter divariasikan
+setiap kali (Tabel~\ref{tab:sa-params}, Gambar~\ref{fig:sa-compare}).
+
+\input{sections/tables/sa_params}
+
+Rata-rata durasi \textit{ratio bias} 0,5 pada Tabel~\ref{tab:sa-params} dipengaruhi satu
+\textit{run} (\textit{seed} 1) yang tercatat 683 detik, padahal dua \textit{run} lainnya
+sekitar 21 detik. Nilai objektifnya tidak terpengaruh.
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{sa/medium/compare_iterations.png}
+		\caption{Banyak iterasi}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{sa/medium/compare_p0.png}
+		\caption{$p_0$}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{sa/medium/compare_schedule.png}
+		\caption{Jadwal suhu}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{sa/medium/stuck_count_box.png}
+		\caption{Frekuensi \textit{stuck}}
+	\end{subfigure}
+	\caption{Perbandingan konfigurasi Simulated Annealing (instans \textit{medium})}
+	\label{fig:sa-compare}
+\end{figure}
+
+\input{sections/tables/sa_large_bias}
+
+\section{Hasil Genetic Algorithm}
+
+Sesuai spesifikasi, dilakukan dua eksperimen: (1) populasi tetap 50 dengan
+generasi 50, 100, dan 200; (2) generasi tetap 100 dengan populasi 20, 50, dan 100.
+Laju mutasi 0,2 dan \textit{elitism} 1. Konfigurasi (50, 100) termasuk dalam kedua
+eksperimen. Ringkasannya ada pada Tabel~\ref{tab:ga-summary}, sedangkan hasil setiap
+\textit{run} (populasi, iterasi, nilai awal dan akhir, durasi) ada pada
+Tabel~\ref{tab:ga-runs} di Lampiran. Kolom ``Awal'' adalah nilai individu terbaik
+generasi ke-0.
+
+\input{sections/tables/ga_summary}
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{ga/large/compare_generations.png}
+		\caption{Populasi 50, generasi bervariasi}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{ga/large/compare_population.png}
+		\caption{Generasi 100, populasi bervariasi}
+	\end{subfigure}
+	\caption{Nilai objektif maksimum GA terhadap generasi (instans \textit{large}; garis = rata-rata 3 \textit{run}, area = rentang)}
+	\label{fig:ga-compare}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{ga/large/pop100_gen100/seed1/curve.png}
+		\caption{Nilai maksimum dan rata-rata populasi}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\includegraphics[width=\textwidth]{ga/large/pop100_gen100/seed1/final.png}
+		\caption{\textit{State} akhir}
+	\end{subfigure}
+	\caption{GA populasi 100, generasi 100 (instans \textit{large}, \textit{seed} 1)}
+	\label{fig:ga-run}
+\end{figure}
+
+\section{Hasil Bonus: Objektif ETA}
+
+SA (jadwal geometrik, 20.000 iterasi, $p_0=0{,}01$, \textit{seed} 1) dijalankan pada
+instans \textit{medium} dengan objektif ETA dan objektif \textit{value} biasa
+(\texttt{output/sa/medium/eta/}).
+
+\begin{table}[H]
+	\centering
+	\caption{Perbandingan objektif \textit{value} dan ETA (SA, instans \textit{medium}, \textit{seed} 1)}
+	\label{tab:eta}
+	\begin{tabular}{l r r r r}
+		\toprule
+		\textbf{Objektif} & \textbf{Total value} & $\sum$ \textbf{value/ETA} & \textbf{Paket dimuat} & \textbf{Rata-rata ETA} \\
+		\midrule
+		\textit{value} & 2266 & 933,4 & 40 & 3,95 \\
+		ETA & 2180 & 966,0 & 40 & 3,70 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+Objektif ETA mengorbankan 3,8\% total \textit{value} untuk memuat paket dengan rata-rata
+ETA lebih kecil (3,70 dibanding 3,95 hari; rata-rata ETA semua paket 4,11). Artinya,
+paket yang lebih mendesak lebih diprioritaskan, sesuai tujuan objektif ini.
+
+\section{Analisis}
+
+\begin{table}[H]
+	\centering
+	\caption{Perbandingan konfigurasi terbaik tiap algoritma (rata-rata 3 \textit{run})}
+	\label{tab:compare}
+	\begin{tabular}{l l r r r}
+		\toprule
+		\textbf{Instans} & \textbf{Algoritma} & \textbf{Akhir} & \textbf{Gap (\%)} & \textbf{Durasi (s)} \\
+		\midrule
+		\multirow{4}{*}{\textit{small}}  & HC \textit{steepest} & 680,7 & 7,3 & 0,29 \\
+		& HC \textit{random-restart} & 712,7 & 2,9 & 1,21 \\
+		& SA (20.000 iterasi) & \textbf{734,0} & \textbf{0,0} & 4,63 \\
+		& GA (pop. 50, gen. 200) & 698,3 & 4,9 & 1,00 \\
+		\midrule
+		\multirow{5}{*}{\textit{medium}} & HC \textit{steepest} & 2213,7 & 7,1 & 53,51 \\
+		& HC \textit{random-restart} & 2260,7 & 5,2 & 120,72 \\
+		& SA (20.000 iterasi, $p_0=0{,}01$) & 2233,3 & 6,3 & 23,04 \\
+		& SA (40.000 iterasi, $p_0=0{,}8$) & \textbf{2262,3} & \textbf{5,1} & 37,29 \\
+		& GA (pop. 50, gen. 200) & 1477,7 & 38,0 & 0,67 \\
+		\midrule
+		\multirow{4}{*}{\textit{large}}  & HC \textit{steepest} & 5205,7 & 7,6 & 693,51 \\
+		& HC \textit{random-restart} & \textbf{5261,7} & \textbf{6,6} & 1683,70 \\
+		& SA (20.000 iterasi, \textit{ratio bias} 0,2) & 5076,3 & 9,9 & 21,30 \\
+		& GA (pop. 100, gen. 100) & 2265,7 & 59,8 & 10,70 \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\subsection{Seberapa dekat dengan optimum global?}
+
+Pada instans \textit{small}, SA mencapai 734 pada ketiga \textit{run}. Nilai ini sama
+dengan batas atas, sehingga hasil SA \emph{terbukti} merupakan optimum global.
+HC \textit{random-restart} tertinggal 2,9\% dan GA 4,9\%. Pada \textit{medium} dan
+\textit{large}, HC dan SA berada 5--10\% di bawah batas atas. Angka ini merupakan
+batas atas jarak, karena batas atas \textit{knapsack} mengabaikan geometri:
+kombinasi paket yang muat berdasarkan berat dan volume belum tentu dapat disusun
+tanpa celah, tanpa melayang, dan tanpa bertumpu pada paket \textit{fragile}.
+Jarak sebenarnya ke optimum global kemungkinan lebih kecil.
+
+GA tertinggal jauh pada \textit{medium} (38\%) dan \textit{large} (60\%). Penyebabnya
+dibahas pada Subbab~\ref{sec:ga-analisis}.
+
+\subsection{Perbandingan antaralgoritma}
+
+\begin{itemize}
+	\item \textbf{HC \textit{steepest-ascent}} cepat naik pada awal pencarian
+	(Gambar~\ref{fig:hc-curve}), tetapi berhenti di \textit{local optimum} setelah
+	7--65 iterasi. Hasilnya sudah cukup baik karena setiap langkah memilih yang terbaik
+	dari ribuan tetangga.
+	\item \textbf{HC \textit{stochastic}} paling cepat (di bawah 1 detik), tetapi paling
+	buruk di antara varian HC (gap 16--48\%). Hanya 50 tetangga acak yang diperiksa,
+	sehingga pencarian berhenti begitu tidak ada satu pun dari 50 tetangga itu yang
+	lebih baik, padahal tetangga yang lebih baik masih ada.
+	\item \textbf{HC \textit{sideways move}} tidak lebih baik daripada \textit{steepest}.
+	Semua \textit{run} berhenti karena batas \textit{sideways move}. Artinya banyak
+	\textit{plateau} (misalnya rotasi atau \textit{swap} paket di luar truk yang tidak
+	mengubah nilai), tetapi berjalan di \textit{plateau} jarang menemukan jalan naik.
+	\item \textbf{HC \textit{random-restart}} adalah varian HC terbaik dan paling konsisten,
+	dengan biaya waktu beberapa kali lipat \textit{steepest} karena setiap
+	\textit{restart} adalah satu pendakian penuh.
+	\item \textbf{SA} terbaik di \textit{small}, setara HC \textit{random-restart} di
+	\textit{medium} bila diberi 40.000 iterasi, dan sedikit di bawahnya di \textit{large}.
+	Keunggulannya adalah waktu: puluhan detik dibanding puluhan menit HC pada \textit{large}.
+	\item \textbf{GA} terburuk pada instans sedang dan besar meskipun waktunya singkat.
+\end{itemize}
+
+\subsection{Perbandingan durasi}
+
+Biaya HC \textit{steepest} dan \textit{sideways} per iterasi sebanding dengan banyak
+tetangga, yaitu $O(n^2)$ \textit{swap} ditambah $O(n^2)$ \textit{move} ke \textit{extreme
+point}. Setiap tetangga juga di-\textit{repair}, yang biayanya kuadratik terhadap banyak
+paket di truk. Karena itu waktunya tumbuh sangat cepat: sekitar 0,3 detik di
+\textit{small}, 50 detik di \textit{medium}, dan 10--16 menit di \textit{large}.
+\textit{Random-restart} sekitar 2--2,5 kali \textit{steepest}. Sebaliknya, SA dan GA hanya
+menilai satu tetangga per iterasi atau per anak, sehingga biayanya hampir linear
+terhadap banyak iterasi (Tabel~\ref{tab:sa-params}: 2.500 iterasi 1,7 detik, 40.000
+iterasi 37 detik). GA paling cepat karena total anak yang dievaluasi hanya
+populasi $\times$ generasi (paling banyak 10.000).
+
+% TODO: hapus catatan ini jika eksperimen SA dijalankan ulang pada mesin yang sama dengan HC dan GA.
+Catatan: eksperimen SA dijalankan pada waktu yang berbeda dari eksperimen HC dan GA.
+Pengukuran ulang satu \textit{run} SA \textit{medium} 20.000 iterasi pada mesin yang
+sama dengan HC hanya memerlukan sekitar 3 detik (Tabel~\ref{tab:sa-runs} mencatat
+sekitar 23 detik). Karena itu, perbandingan durasi antaralgoritma dibaca sebagai
+orde besaran. Kesimpulan bahwa HC jauh lebih lambat daripada SA pada instans besar
+tidak berubah.
+
+\subsection{Konsistensi hasil}
+
+SA pada \textit{small} memberikan hasil identik di ketiga \textit{run}. Pada
+\textit{medium} dan \textit{large}, HC \textit{random-restart} paling konsisten
+(simpangan baku 7 dan 46), disusul SA (21 dan 42--75) dan HC \textit{steepest}.
+HC \textit{stochastic} dan GA paling tidak konsisten. Simpangan baku GA mencapai
+245 pada \textit{large}, karena hasilnya sangat bergantung pada individu awal terbaik
+yang kebetulan terbentuk.
+
+\subsection{Pengaruh parameter Simulated Annealing}
+
+\begin{itemize}
+	\item \textbf{Banyak iterasi} adalah parameter paling berpengaruh: nilai akhir naik
+	dari 1985,7 (2.500 iterasi) menjadi 2262,3 (40.000 iterasi). Frekuensi \textit{stuck}
+	ikut naik, karena dengan jadwal yang lebih panjang lebih banyak waktu dihabiskan
+	pada suhu rendah.
+	\item \textbf{$p_0$ kecil (0,01)} memberi hasil terbaik pada 10.000 iterasi. Dengan
+	$p_0$ besar, sebagian besar iterasi awal terbuang untuk menerima langkah buruk.
+	Karena setiap \textit{state} sudah di-\textit{repair} menjadi valid, sehingga eksplorasi
+	berlebihan tidak diperlukan.
+	\item \textbf{Jadwal geometrik} jauh lebih baik daripada linear (2187,7 vs 1755,7).
+	Jadwal linear mempertahankan suhu tinggi terlalu lama dan baru dingin di akhir,
+	sehingga waktu untuk memperbaiki solusi sangat sedikit.
+	\item \textbf{$T_{\min}$ kecil} lebih baik. Dengan $T_{\min}=5$, langkah memburuk masih
+	sering diterima di akhir, sehingga solusi tidak sempat ``mengeras''.
+	\item \textbf{\textit{Ratio bias}} sedikit menaikkan rata-rata, yaitu +0,6\% di
+	\textit{medium} dan +2,0\% di \textit{large} untuk bias 0,2.
+\end{itemize}
+
+\subsection{Pengaruh populasi dan generasi pada Genetic Algorithm}
+\label{sec:ga-analisis}
+
+Pada \textit{small} dan \textit{medium}, menambah generasi (50 $\rightarrow$ 200) dan
+menambah populasi (20 $\rightarrow$ 100) sama-sama menaikkan nilai akhir. Pada
+\textit{medium} nilainya naik dari 1221,7 ke 1477,7 untuk generasi dan dari 1220,0 ke
+1422,7 untuk populasi. Kurva pada Gambar~\ref{fig:ga-compare} masih naik di akhir,
+sehingga GA belum konvergen. Durasi naik linear terhadap populasi $\times$ generasi.
+Pada \textit{large}, pengaruh keduanya hampir tertutup oleh variansi: banyak
+\textit{run} tidak pernah melampaui individu terbaik generasi ke-0 (kolom ``Gen.
+terbaik'' bernilai 0 pada Tabel~\ref{tab:ga-runs}).
+
+Rendahnya kinerja GA disebabkan oleh operator \textit{crossover}. \textit{Single-point
+crossover} menggabungkan koordinat paket dari dua susunan yang tidak berhubungan.
+Posisi yang baik pada satu induk hanya bermakna relatif terhadap paket lain di susunan
+induk itu, sehingga anak umumnya berisi banyak paket yang bertumpuk. \textit{Repair}
+kemudian mengeluarkan paket-paket tersebut. Pengukuran tambahan pada 200 pasangan induk
+acak dari populasi awal menunjukkan bahwa anak (setelah \textit{repair}) lebih baik
+daripada induk terbaiknya hanya pada 8\% (\textit{small}), 6\% (\textit{medium}), dan
+2\% (\textit{large}) kasus. Perbaikan nilai praktis hanya berasal dari mutasi, yaitu
+satu langkah per anak dengan peluang 0,2. Jumlah ini jauh lebih sedikit daripada
+puluhan ribu langkah SA. Selain itu, populasi awal acak setelah \textit{repair} hanya
+berisi sekitar separuh paket yang semula dimasukkan, sehingga titik awal GA rendah.
+Representasi yang cocok untuk \textit{crossover} versi salindia (\textit{string} dengan
+gen yang independen, seperti 8-\textit{queens}) tidak cocok untuk persoalan
+\textit{packing} yang gennya saling bergantung secara geometris.

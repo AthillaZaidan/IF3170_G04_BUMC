@@ -1,0 +1,23 @@
+\begin{table}[H]\centering\small
+\caption{Ringkasan Hill-Climbing (rata-rata 3 \textit{run})}\label{tab:hc-summary}
+\begin{adjustbox}{max width=\textwidth}\begin{tabular}{l l r r r r r}
+\toprule
+\textbf{Instans} & \textbf{Varian} & \textbf{Akhir (mean $\pm$ std)} & \textbf{Min--maks} & \textbf{Gap (\%)} & \textbf{Durasi (s)} & \textbf{Iterasi} \\
+\midrule
+\multirow{4}{*}{\textit{small}} & Steepest & 680.7 $\pm$ 24.4 & 661--708 & 7.3 & 0.29 & 8.3 \\
+ & Stochastic & 538.3 $\pm$ 115.0 & 406--614 & 26.7 & 0.03 & 7.0 \\
+ & Sideways & 682.0 $\pm$ 45.0 & 630--708 & 7.1 & 1.18 & 28.7 \\
+ & Random-restart & 712.7 $\pm$ 8.1 & 708--722 & 2.9 & 1.21 & 40.7 \\
+\midrule
+\multirow{4}{*}{\textit{medium}} & Steepest & 2213.7 $\pm$ 23.9 & 2197--2241 & 7.1 & 53.51 & 29.3 \\
+ & Stochastic & 1469.7 $\pm$ 58.4 & 1404--1516 & 38.4 & 0.29 & 23.7 \\
+ & Sideways & 2192.7 $\pm$ 12.7 & 2178--2201 & 8.0 & 50.77 & 47.7 \\
+ & Random-restart & 2260.7 $\pm$ 7.2 & 2256--2269 & 5.2 & 120.72 & 167.7 \\
+\midrule
+\multirow{4}{*}{\textit{large}} & Steepest & 5205.7 $\pm$ 21.6 & 5181--5221 & 7.6 & 693.51 & 64.0 \\
+ & Stochastic & 3061.0 $\pm$ 163.6 & 2912--3236 & 45.7 & 0.81 & 41.0 \\
+ & Sideways & 5179.7 $\pm$ 91.9 & 5107--5283 & 8.0 & 922.48 & 82.3 \\
+ & Random-restart & 5261.7 $\pm$ 46.1 & 5209--5295 & 6.6 & 1683.70 & 186.3 \\
+\bottomrule
+\end{tabular}\end{adjustbox}
+\end{table}

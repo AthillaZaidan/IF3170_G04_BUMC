@@ -4,7 +4,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[indonesian]{babel}
-\usepackage{lipsum}
+\addto\captionsindonesian{\renewcommand{\bibname}{Referensi}}
 
 % ---------- Paket matematika & gambar ----------
 \usepackage{amsmath,amssymb}
@@ -13,36 +13,54 @@
 \usepackage{subcaption}
 \usepackage{float}
 \bibliographystyle{IEEEtran}
+
 % ---------- Paket lain ----------
 \usepackage[most]{tcolorbox}
-\usepackage{forest}
 \usepackage{hyperref}
 \usepackage{fancyhdr}
-
-\usepackage{titlesec}
-
 \usepackage{titlesec}
 \usepackage{longtable}
-\usepackage{array} % untuk menentukan lebar kolom
-\usepackage{booktabs} % gaya tabel lebih elegan
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{multirow}
 \usepackage[table]{xcolor}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{adjustbox}
+\emergencystretch=3em
 
-
-
-% Tambah jarak aman dari header dan footer:	
-\setlength{\headheight}{10pt}   % wajib cukup besar untuk fancyhdr
-\setlength{\headsep}{55pt}      % jarak header ke teks
-\setlength{\footskip}{28pt}     % jarak teks ke footer
+\setlength{\headheight}{10pt}
+\setlength{\headsep}{55pt}
+\setlength{\footskip}{28pt}
 \usepackage[a4paper,top=3cm,bottom=3cm,left=3cm,right=3cm]{geometry}
 
-% Semua gambar dari folder public dan subfoldernya
-\graphicspath{{public/}{public/01-pendahuluan/}{public/02-dasar-teori/}{public/03-implementasi/}}
+% Gambar dari folder public dan dari folder output repository
+\graphicspath{{public/}{../output/}}
+
+% ---------- Listing kode Python ----------
+\lstdefinestyle{py}{
+	language=Python,
+	basicstyle=\ttfamily\scriptsize,
+	keywordstyle=\color{blue!70!black}\bfseries,
+	commentstyle=\color{gray}\itshape,
+	stringstyle=\color{teal!70!black},
+	numbers=left,
+	numberstyle=\tiny\color{gray},
+	frame=single,
+	rulecolor=\color{gray!50},
+	breaklines=true,
+	showstringspaces=false,
+	tabsize=4,
+	columns=fullflexible,
+	keepspaces=true,
+}
+\lstset{style=py}
+\renewcommand{\lstlistingname}{Kode}
 
 % --- Pengaturan header & footer ---
 \pagestyle{fancy}
-\fancyhf{} % clear all
+\fancyhf{}
 
-% --- Paksa semua halaman (termasuk awal chapter) memakai fancy ---
 \fancypagestyle{plain}{%
 	\fancyhf{}%
 	\fancyhead[L]{%
@@ -51,9 +69,9 @@
 	}%
 	\fancyhead[R]{%
 		\begin{minipage}{9cm}
-			\raggedleft\bfseries Kode | Nama Mata Kuliah\\
-			\normalsize Laporan Akhir Tugas Besar X\\
-			Semester X 2025/2026
+			\raggedleft\bfseries IF3170 Inteligensi Artifisial\\
+			\normalsize Laporan Tugas Besar 1\\
+			\itshape Semester I 2026/2027
 		\end{minipage}
 	}%
 	\renewcommand{\headrulewidth}{0.4pt}%
@@ -63,7 +81,6 @@
 	\renewcommand{\footrulewidth}{0.4pt}%
 }
 
-
 \fancyhead[L]{%
 	\includegraphics[height=1.5cm]{logo-itb}\hspace{0.3cm}%
 	\includegraphics[height=1.5cm]{logo-stei}\hspace{0.3cm}%
@@ -71,85 +88,88 @@
 
 \fancyhead[R]{%
 	\begin{minipage}{9cm}
-		\raggedleft\bfseries IF2123 Aljabar Linier dan Geometri\\
-		\normalsize Laporan Akhir Tugas Besar 2\\
-		\itshape Semester I 2025/2026
+		\raggedleft\bfseries IF3170 Inteligensi Artifisial\\
+		\normalsize Laporan Tugas Besar 1\\
+		\itshape Semester I 2026/2027
 	\end{minipage}
 }
 
 \renewcommand{\headrulewidth}{0.4pt}
-
 \fancyfoot[L]{\small v1.0}
 \fancyfoot[C]{\small Halaman \thepage}
 \fancyfoot[R]{\small }
 \renewcommand{\footrulewidth}{0.4pt}
 
 \begin{document}
-	
+
 	\begin{titlepage}
 		\thispagestyle{empty}
 		\centering
-		
-		% ---------- Judul utama ----------
-		{\LARGE \textbf{Tugas Besar X}\par}
+
+		{\LARGE \textbf{Tugas Besar 1}\par}
 		\vspace{0.2cm}
-		{\LARGE \textbf{(Nama Kelompok)}\par}
+		{\LARGE \textbf{Kelompok G04 -- BUMC}\par}
 		\vspace{0.8cm}
-		{\large (Kode | Nama Mata Kuliah)\par}
+		{\large IF3170 Inteligensi Artifisial\par}
 		\vspace{0.2cm}
-		{\large (Judul Laporan)\par}
+		{\large Pencarian Solusi Pengisian Peti Kemas Truk\\dengan Algoritma \textit{Local Search}\par}
 		\vspace{0.2cm}
-		{\large Semester X Tahun 20XX/20XX\par}
-		
-		% ---------- Gambar tengah ----------
-		\vspace{1.8cm}
-		\includegraphics[width=0.9\textwidth]{foto-kelompok}\par
-		
-		% ---------- Disusun oleh ----------
-		\vspace{1.2cm}
+		{\large Semester I Tahun 2026/2027\par}
+
+		\vspace{1.0cm}
+		\includegraphics[width=0.75\textwidth,height=7cm,keepaspectratio]{foto-kelompok}\par
+
+		\vspace{0.8cm}
 		{\bfseries Disusun oleh:\par}
 		\vspace{0.2cm}
-		\textbf{(Nama Kelompok)}
+		\textbf{Kelompok G04 -- BUMC}
 		\vspace{0.5cm} \\
 		\begin{tabular}{l l}
-			XXXXXXXXXXXXXXXXXXXXXX & (YYYYYYYY) \\
-			XXXXXXXXXXXXXXXXXXXXXX & (YYYYYYYY) \\
-			XXXXXXXXXXXXXXXXXXXXXX & (YYYYYYYY) \\
+			Raynard Fausta & (13524052) \\
+			Jason Edward Salim & (13524034) \\
+			Athilla Zaidan Zidna Fann & (13524068) \\
 		\end{tabular}
-		
-		% ---------- Institusi ----------
-		\vspace{2.0cm}
-		Laboratorium Ilmu dan Rekayasa Komputasi\par
+
+		\vfill
+		Laboratorium Artificial Intelligence\par
 		Program Studi Teknik Informatika\par
 		Sekolah Teknik Elektro dan Informatika\par
 		Institut Teknologi Bandung\par
-		
+
 	\end{titlepage}
-	
+
 	\clearpage
 	\pagestyle{fancy}
-	
+
 	\tableofcontents
 	\clearpage
-	
-	\chapter{Pendahuluan}
+	\listoftables
+	\clearpage
+	\listoffigures
+	\clearpage
+
+	\chapter{Deskripsi Persoalan}
 	\input{sections/01-pendahuluan}
-	
+
 	\chapter{Dasar Teori}
 	\input{sections/02-dasar-teori}
-	
-	\chapter{Implementasi}
+
+	\chapter{Pembahasan: Implementasi}
 	\input{sections/03-implementasi}
-	
-	\chapter{Eksperimen}
+
+	\chapter{Pembahasan: Hasil dan Analisis Eksperimen}
 	\input{sections/04-eksperimen}
-	
-	\chapter{Penutup}
+
+	\chapter{Kesimpulan dan Saran}
 	\input{sections/05-penutup}
 
+	\chapter{Pembagian Tugas}
+	\input{sections/07-pembagian-tugas}
+
+	\bibliography{dafpus}
+
+	\appendix
 	\chapter{Lampiran}
 	\input{sections/06-lampiran}
-	
-	\bibliography{dafpus}
-	
+
 \end{document}

@@ -1,0 +1,83 @@
+\section{Latar Belakang}
+
+Mejiro Express ingin menguji coba layanan logistik darat dengan satu truk peti kemas.
+Setiap pengiriman perlu mengatur paket mana yang dimuat, di mana paket diletakkan,
+dan bagaimana paket diputar agar total nilai (\textit{value}) paket yang terangkut
+sebesar mungkin, tanpa melanggar batasan fisik peti kemas. Persoalan ini merupakan
+varian persoalan \textit{3D knapsack} / \textit{3D bin packing} yang tergolong NP-hard,
+sehingga pencarian solusi eksak tidak praktis untuk ukuran instans yang realistis.
+Tugas ini menyelesaikannya dengan algoritma \textit{local search}: Hill-Climbing,
+Simulated Annealing, dan Genetic Algorithm~\cite{asisten2026spek}.
+
+\section{Variabel Persoalan}
+
+Setiap paket berbentuk balok dengan atribut berikut.
+
+\begin{table}[H]
+	\centering
+	\caption{Atribut paket dan truk}
+	\label{tab:atribut}
+	\begin{tabular}{l l p{8cm}}
+		\toprule
+		\textbf{Entitas} & \textbf{Atribut} & \textbf{Keterangan} \\
+		\midrule
+		Paket & \texttt{id} & Identitas paket \\
+		& \texttt{w, l, h} & Lebar, panjang, dan tinggi paket \\
+		& \texttt{orientation} & Sumbu truk yang sejajar dengan sisi \texttt{w}, \texttt{l}, \texttt{h}; ada enam kemungkinan \\
+		& \texttt{value} & Nilai paket \\
+		& \texttt{weight} & Berat paket \\
+		& \texttt{fragile} & Paket pecah-belah atau tidak \\
+		& \texttt{eta} & Perkiraan sisa hari hingga paket harus tiba \\
+		\midrule
+		Truk & \texttt{w, l, h} & Dimensi peti kemas \\
+		& \texttt{max\_capacity} & Berat maksimum yang dapat diangkut \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+\section{Fungsi Objektif dan Batasan}
+
+Fungsi objektif yang dimaksimalkan adalah total \textit{value} paket yang berada di
+dalam peti kemas:
+\begin{equation}
+	f(s) = \sum_{i \,:\, \text{paket } i \text{ di dalam truk}} \text{value}_i .
+\end{equation}
+Paket yang berada di luar truk tidak menyumbang nilai. Sebuah konfigurasi dianggap
+valid apabila memenuhi seluruh batasan berikut.
+
+\begin{enumerate}
+	\item \textbf{Tidak menembus dinding.} Seluruh bagian paket di dalam truk berada di dalam peti kemas.
+	\item \textbf{Tidak saling bertumpuk ruang.} Dua paket tidak boleh menempati ruang yang sama.
+	\item \textbf{Tidak melayang.} Paket dengan sudut kiri-bawah-belakang $(x_i,y_i,z_i)$ dan alas
+	$B_i=\{(x,y,z_i)\mid x_i\le x<x_i+w_i,\ y_i\le y<y_i+d_i\}$ harus memiliki minimal satu titik
+	alas yang ditopang, yaitu $z_i=0$ (lantai truk) atau tepat berada di atas permukaan atas paket lain.
+	\item \textbf{Barang pecah-belah tidak menjadi penopang.} Tidak boleh ada paket yang bertumpu di atas paket \textit{fragile}.
+	\item \textbf{Kapasitas.} Total berat paket di dalam truk tidak melebihi \texttt{max\_capacity}.
+\end{enumerate}
+
+Koordinat berupa bilangan bulat. State awal dibangkitkan secara acak. Aksi tetangga yang
+diperbolehkan adalah (1) menukar dua paket, baik di dalam maupun di luar truk,
+(2) memindahkan paket ke koordinat lain, dan (3) merotasi paket $90^\circ$ terhadap
+sumbu $x$, $y$, atau $z$.
+
+\section{Instans Uji}
+
+Tiga instans dibangkitkan dengan \texttt{src/generate\_instance.py} (\textit{seed} 42) dan
+disimpan di \texttt{data/instances/}. Kolom ``batas atas'' adalah nilai optimum
+\textit{knapsack} 0/1 dengan batasan berat dan volume yang mengabaikan geometri
+(Subbab~\ref{sec:bound}); nilai ini tidak lebih kecil daripada optimum global persoalan.
+
+\begin{table}[H]
+	\centering
+	\caption{Instans uji}
+	\label{tab:instans}
+	\begin{tabular}{l c c c c}
+		\toprule
+		\textbf{Instans} & \textbf{Truk} ($w\times l\times h$) & \textbf{Kapasitas} & \textbf{Jumlah paket} & \textbf{Batas atas} \\
+		\midrule
+		small  & $6\times8\times5$    & 150  & 15  & 734 \\
+		medium & $10\times20\times5$  & 500  & 55  & 2384 \\
+		large  & $12\times24\times8$  & 1200 & 120 & 5633 \\
+		\bottomrule
+	\end{tabular}
+\end{table}

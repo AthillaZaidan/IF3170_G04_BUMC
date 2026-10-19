@@ -1,0 +1,47 @@
+\section{Local Search}
+
+\textit{Local search} bekerja pada satu (atau sekumpulan) \textit{state} lengkap dan
+berpindah ke \textit{state} tetangga untuk memperbaiki nilai fungsi objektif. Jalur
+pencarian tidak disimpan, sehingga kebutuhan memorinya kecil dan cocok untuk
+persoalan optimasi berukuran besar seperti persoalan pengisian peti kemas ini.
+Kelemahannya, pencarian dapat terjebak di \textit{local optimum}, \textit{plateau},
+atau \textit{ridge}~\cite{russell2010aima,khodra2021localsearch}.
+
+\section{Hill-Climbing}
+
+Hill-Climbing selalu berpindah ke tetangga yang lebih baik dan berhenti ketika tidak
+ada tetangga yang lebih baik~\cite{russell2010aima,khodra2021hc}. Varian yang
+diimplementasikan:
+\begin{itemize}
+	\item \textbf{Steepest-ascent}: membangkitkan semua tetangga dan memilih yang terbaik.
+	Berhenti bila tetangga terbaik tidak lebih baik daripada \textit{state} sekarang.
+	\item \textbf{Stochastic}: memilih secara acak salah satu tetangga yang lebih baik.
+	\item \textbf{Sideways move}: seperti \textit{steepest-ascent}, tetapi boleh berpindah ke
+	tetangga yang bernilai sama untuk keluar dari \textit{plateau}, dibatasi oleh
+	parameter \textit{maximum sideways move}.
+	\item \textbf{Random-restart}: menjalankan \textit{steepest-ascent} berulang kali dari
+	\textit{state} awal acak yang berbeda dan mengambil hasil terbaik, dibatasi oleh
+	parameter \textit{maximum restart}.
+\end{itemize}
+
+\section{Simulated Annealing}
+
+Simulated Annealing~\cite{kirkpatrick1983sa,khodra2021sa} memilih satu tetangga acak
+setiap iterasi. Tetangga yang lebih baik ($\Delta E>0$) selalu diterima, sedangkan
+tetangga yang lebih buruk diterima dengan peluang $e^{\Delta E/T}$. Suhu $T$
+diturunkan bertahap sesuai jadwal (\textit{schedule}). Pada suhu tinggi pencarian
+bersifat eksploratif, sedangkan pada suhu rendah perilakunya mendekati Hill-Climbing.
+Dengan demikian SA dapat keluar dari \textit{local optimum} di awal pencarian.
+
+\section{Genetic Algorithm}
+
+Genetic Algorithm~\cite{russell2010aima,khodra2021ga,kkif2026slides} memelihara
+populasi berisi $k$ \textit{state} (individu). Nilai setiap individu diukur dengan
+\textit{fitness function}. Generasi berikutnya dibentuk melalui tiga operator:
+\begin{enumerate}
+	\item \textbf{Seleksi}: induk dipilih dengan peluang sebanding \textit{fitness}
+	(\textit{roulette wheel}).
+	\item \textbf{Crossover}: dua induk dipotong pada titik acak yang sama, lalu
+	bagian ekornya ditukar sehingga terbentuk dua anak.
+	\item \textbf{Mutasi}: anak diubah secara acak dengan peluang kecil.
+\end{enumerate}
