@@ -14,6 +14,7 @@ algoritma, lalu implementasi setiap algoritma. Potongan kode diambil langsung da
 		\textbf{Modul} & \textbf{Isi} \\
 		\midrule
 		\texttt{core/models.py} & Data statis: \texttt{Package}, \texttt{Truck}, \texttt{Problem} \\
+		\texttt{core/validation.py} & Validasi tipe dan rentang parameter serta data instans \\
 		\texttt{core/state.py} & Representasi \textit{state}: \texttt{Placement} dan \texttt{State} \\
 		\texttt{core/orientation.py} & Enam orientasi paket dan rotasi $90^\circ$ \\
 		\texttt{core/geometry.py} & Operasi balok: tumpang tindih, tumpuan, dinding \\
@@ -44,7 +45,7 @@ truk yang sejajar dengan sisi \texttt{w}, \texttt{l}, dan \texttt{h}; misalnya
 \textit{immutable} (\texttt{frozen=True}), \textit{state} dapat langsung dibandingkan
 dan disimpan di dalam \textit{set}.
 
-\lstinputlisting[caption={Model persoalan (\texttt{src/core/models.py})},linerange={9-39}]{../src/core/models.py}
+\lstinputlisting[caption={Model persoalan (\texttt{src/core/models.py})},linerange={11-60}]{../src/core/models.py}
 \lstinputlisting[caption={Representasi \textit{state} (\texttt{src/core/state.py})}]{../src/core/state.py}
 
 \section{Batasan dan Fungsi Objektif}
@@ -55,7 +56,7 @@ paket yang hanya bersentuhan sisi tidak dianggap bertumpuk. Fungsi
 \texttt{rests\_on} mengikuti definisi tumpuan pada spesifikasi: paket atas tepat
 berada di permukaan atas paket bawah dan proyeksi alasnya beririsan.
 
-\lstinputlisting[caption={Pemeriksaan batasan (\texttt{src/core/constraints.py})},linerange={16-66}]{../src/core/constraints.py}
+\lstinputlisting[caption={Pemeriksaan batasan (\texttt{src/core/constraints.py})},linerange={16-67}]{../src/core/constraints.py}
 
 Fungsi objektif adalah total \textit{value} paket di dalam truk. Modul ini juga
 menyediakan \texttt{evaluate}, yaitu \textit{value} dikurangi penalti sebesar
@@ -65,7 +66,7 @@ mengeluarkannya. Namun ketiga algoritma pada akhirnya selalu bekerja pada
 \textit{state} yang sudah di-\textit{repair} (Subbab~\ref{sec:repair}), sehingga nilai
 objektif yang dilaporkan sama dengan total \textit{value} \textit{state} valid.
 
-\lstinputlisting[caption={Fungsi objektif (\texttt{src/core/objective.py})},linerange={24-42}]{../src/core/objective.py}
+\lstinputlisting[caption={Fungsi objektif (\texttt{src/core/objective.py})},linerange={24-44}]{../src/core/objective.py}
 
 \section{Heuristik Repair}
 \label{sec:repair}
@@ -85,7 +86,7 @@ sehingga peningkatan nilai tetap berasal dari algoritma pencarian. Langkahnya:
 	Jika permukaan tempatnya mendarat adalah paket \textit{fragile}, paket dikeluarkan.
 \end{enumerate}
 
-\lstinputlisting[caption={Heuristik \textit{repair} untuk satu truk (\texttt{src/core/repair.py})},linerange={36-76}]{../src/core/repair.py}
+\lstinputlisting[caption={Heuristik \textit{repair} untuk satu truk (\texttt{src/core/repair.py})},linerange={38-78}]{../src/core/repair.py}
 
 \section{Aksi Tetangga}
 
@@ -109,7 +110,7 @@ koordinat acak di dalam dinding. \texttt{all\_neighbors} membangkitkan semua tet
 untuk \textit{steepest-ascent}: semua rotasi, semua \textit{swap} yang mengubah
 sesuatu, serta semua \textit{move} ke luar truk dan ke setiap \textit{extreme point}.
 
-\lstinputlisting[caption={\textit{Extreme points} dan tetangga acak (\texttt{src/core/neighbors.py})},linerange={56-120}]{../src/core/neighbors.py}
+\lstinputlisting[caption={\textit{Extreme points} dan tetangga acak (\texttt{src/core/neighbors.py})},linerange={56-121}]{../src/core/neighbors.py}
 
 \section{State Awal}
 
@@ -131,7 +132,7 @@ mengabaikan geometri, sehingga nilainya selalu $\ge$ optimum global. Besaran
 $\text{gap} = 1 - f(s)/\text{batas atas}$ merupakan batas atas jarak hasil ke optimum
 global.
 
-\lstinputlisting[caption={Batas atas \textit{knapsack} (\texttt{src/core/bounds.py})},linerange={14-29}]{../src/core/bounds.py}
+\lstinputlisting[caption={Batas atas \textit{knapsack} (\texttt{src/core/bounds.py})},linerange={14-32}]{../src/core/bounds.py}
 
 \section{Hill-Climbing}
 
@@ -144,19 +145,21 @@ pada eksperimen: \texttt{max\_iterations}=100, \texttt{neighbor\_samples}=50 unt
 \begin{itemize}
 	\item \textbf{Steepest-ascent} memakai \texttt{\_best\_neighbor}, yang menilai seluruh
 	\texttt{all\_neighbors}. Berhenti jika tetangga terbaik tidak lebih baik.
-	\item \textbf{Stochastic} mengambil 50 tetangga acak, menyaring yang lebih baik,
-	lalu memilih salah satu secara acak. Berhenti jika tidak ada yang lebih baik.
-	Penyampelan dipakai karena membangkitkan semua tetangga hanya untuk memilih satu
-	secara acak tidak efisien.
+	\item \textbf{Stochastic} memilih secara acak salah satu tetangga yang lebih baik.
+	Untuk menghemat waktu, mula-mula diambil 50 tetangga acak. Jika tidak ada yang lebih
+	baik, seluruh \texttt{all\_neighbors} diperiksa dan salah satu tetangga yang lebih baik
+	dipilih secara seragam. Pencarian berhenti hanya jika tidak ada satu pun tetangga yang
+	lebih baik (\textit{local optimum}) atau \texttt{max\_iterations} tercapai.
 	\item \textbf{Sideways move} seperti \textit{steepest-ascent}, tetapi boleh pindah ke
 	tetangga bernilai sama yang belum pernah dikunjungi. Berhenti ketika banyak
-	\textit{sideways move} mencapai \texttt{max\_sideways} atau ketika terjadi siklus.
+	\textit{sideways move} mencapai \texttt{max\_sideways}. Karena tetangga bernilai sama
+	yang sudah dikunjungi tidak dipilih lagi, pencarian tidak dapat berputar dalam siklus.
 	\item \textbf{Random-restart} menjalankan \textit{steepest-ascent} dari \textit{state}
 	awal acak sebanyak \texttt{max\_restarts}$+1$ kali dan mengambil hasil terbaik.
 	Banyak iterasi per \textit{restart} dicatat.
 \end{itemize}
 
-\lstinputlisting[caption={Satu kali pendakian Hill-Climbing (\texttt{src/algorithms/hill\_climbing.py})},linerange={100-162}]{../src/algorithms/hill_climbing.py}
+\lstinputlisting[caption={Satu kali pendakian Hill-Climbing (\texttt{src/algorithms/hill\_climbing.py})},linerange={109-171}]{../src/algorithms/hill_climbing.py}
 
 \section{Simulated Annealing}
 
@@ -169,8 +172,9 @@ Heuristik yang dipakai:
 	acak dari \textit{state} awal dan dihitung rata-rata $|\Delta E|$ langkah yang
 	memburuk, lalu $T_0=-\overline{|\Delta E|}/\ln p_0$. Dengan begitu, langkah memburuk
 	rata-rata diterima dengan peluang $p_0$ di awal pencarian~\cite{benameur2004t0}.
-	\item \textbf{Jadwal dengan titik ujung tetap.} Suhu turun dari $T_0$ ke $T_{\min}$ tepat
-	dalam $n$ iterasi, secara geometrik ($T_k=T_0(T_{\min}/T_0)^{k/n}$) atau linear.
+	\item \textbf{Jadwal dengan titik ujung tetap.} Iterasi pertama memakai $T_0$ dan iterasi
+	terakhir tepat $T_{\min}$, secara geometrik ($T_k=T_0(T_{\min}/T_0)^{k/(n-1)}$,
+	$k=0,\dots,n-1$) atau linear.
 	Banyak iterasi menjadi satu-satunya parameter biaya.
 	\item \textbf{Simpan \textit{state} terbaik.} Hasil akhir adalah \textit{state} terbaik
 	yang pernah dikunjungi, bukan \textit{state} terakhir.
@@ -183,8 +187,8 @@ Heuristik yang dipakai:
 	berturut-turut. Satu \textit{plateau} dihitung satu kali.
 \end{itemize}
 
-\lstinputlisting[caption={Kalibrasi $T_0$, jadwal suhu, dan peluang penerimaan (\texttt{src/algorithms/simulated\_annealing.py})},linerange={47-60,90-103}]{../src/algorithms/simulated_annealing.py}
-\lstinputlisting[caption={Iterasi utama Simulated Annealing (\texttt{src/algorithms/simulated\_annealing.py})},linerange={106-154}]{../src/algorithms/simulated_annealing.py}
+\lstinputlisting[caption={Kalibrasi $T_0$, jadwal suhu, dan peluang penerimaan (\texttt{src/algorithms/simulated\_annealing.py})},linerange={48-66,94-106}]{../src/algorithms/simulated_annealing.py}
+\lstinputlisting[caption={Iterasi utama Simulated Annealing (\texttt{src/algorithms/simulated\_annealing.py})},linerange={110-189}]{../src/algorithms/simulated_annealing.py}
 
 \section{Genetic Algorithm}
 \label{sec:ga-impl}
@@ -208,8 +212,8 @@ terbaik dibawa langsung ke generasi berikutnya (\textit{elitism}). Ketiga, mutas
 memakai aksi tetangga, bukan mengganti satu karakter \textit{string}, karena gen
 berisi posisi dan orientasi paket.
 
-\lstinputlisting[caption={Seleksi dan \textit{crossover} (\texttt{src/algorithms/genetic.py})},linerange={35-50}]{../src/algorithms/genetic.py}
-\lstinputlisting[caption={Iterasi utama Genetic Algorithm (\texttt{src/algorithms/genetic.py})},linerange={53-102}]{../src/algorithms/genetic.py}
+\lstinputlisting[caption={Seleksi dan \textit{crossover} (\texttt{src/algorithms/genetic.py})},linerange={34-49}]{../src/algorithms/genetic.py}
+\lstinputlisting[caption={Iterasi utama Genetic Algorithm (\texttt{src/algorithms/genetic.py})},linerange={52-101}]{../src/algorithms/genetic.py}
 
 \section{Bonus: Fungsi Objektif Berbasis ETA}
 
@@ -249,7 +253,7 @@ Perubahan utamanya:
 Untuk satu truk, urutan bilangan acak yang dipakai tidak berubah, sehingga seluruh
 hasil eksperimen satu truk tetap dapat direproduksi persis.
 
-\lstinputlisting[caption={\textit{Repair} per truk (\texttt{src/core/repair.py})},linerange={23-34}]{../src/core/repair.py}
+\lstinputlisting[caption={\textit{Repair} per truk (\texttt{src/core/repair.py})},linerange={23-35}]{../src/core/repair.py}
 
 \section{Visualisasi dan Keluaran}
 

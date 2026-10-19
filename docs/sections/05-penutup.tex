@@ -13,7 +13,9 @@
 	\item HC \textit{random-restart} memberikan hasil terbaik dan paling konsisten pada
 	instans \textit{medium} dan \textit{large}, tetapi waktunya paling lama (sekitar 28
 	menit per \textit{run} pada \textit{large}) karena membangkitkan seluruh tetangga di
-	setiap iterasi. HC \textit{stochastic} paling cepat tetapi paling mudah terjebak.
+	setiap iterasi. HC \textit{stochastic} lebih cepat daripada \textit{steepest}, tetapi
+	hasilnya lebih rendah karena memilih tetangga yang lebih baik secara acak, bukan yang
+	terbaik.
 	\item Genetic Algorithm versi salindia (\textit{roulette wheel}, \textit{single-point
 	crossover}, mutasi) bekerja cukup baik pada instans kecil, tetapi tertinggal jauh pada
 	instans sedang dan besar. \textit{Crossover} yang menukar ekor kromosom merusak susunan

@@ -13,6 +13,15 @@
 \usepackage{subcaption}
 \usepackage{float}
 \bibliographystyle{IEEEtran}
+% \bstctlcite berasal dari kelas IEEEtran; didefinisikan ulang karena dokumen ini memakai kelas report.
+% Dipakai untuk mematikan garis pengganti nama penulis yang berulang di daftar referensi.
+\makeatletter
+\def\bstctlcite{\@ifnextchar[{\@bstctlcite}{\@bstctlcite[@auxout]}}
+\def\@bstctlcite[#1]#2{\@bsphack\@for\@citeb:=#2\do{%
+  \edef\@citeb{\expandafter\@firstofone\@citeb}%
+  \if@filesw\immediate\write\csname #1\endcsname{\string\citation{\@citeb}}\fi}%
+  \@esphack}
+\makeatother
 
 % ---------- Paket lain ----------
 \usepackage[most]{tcolorbox}
@@ -101,6 +110,7 @@
 \renewcommand{\footrulewidth}{0.4pt}
 
 \begin{document}
+\bstctlcite{IEEEexample:BSTcontrol}
 
 	\begin{titlepage}
 		\thispagestyle{empty}

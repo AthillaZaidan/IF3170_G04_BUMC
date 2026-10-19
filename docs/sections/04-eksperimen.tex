@@ -186,7 +186,7 @@ independen berbasis sel, dan semuanya valid.
 		\textbf{Instans} & \textbf{Algoritma} & \textbf{1 truk} & \textbf{2 truk (mean $\pm$ std)} & \textbf{Gap 2 truk (\%)} & \textbf{Durasi 2 truk (s)} \\
 		\midrule
 		\multirow{5}{*}{\textit{medium}} & HC \textit{steepest} & 2213,7 & 2544,3 $\pm$ 6,5 & 2,4 & 48,1 \\
-		& HC \textit{stochastic} & 1469,7 & 1669,0 $\pm$ 168,9 & 36,0 & 0,6 \\
+		& HC \textit{stochastic} & 2105,3 & 2426,0 $\pm$ 51,6 & 7,0 & 23,7 \\
 		& SA (20.000 iterasi, $p_0=0{,}01$) & 2233,3 & 2543,0 $\pm$ 28,0 & 2,5 & 4,6 \\
 		& GA (pop. 50, gen. 100) & 1319,3 & 1608,7 $\pm$ 66,3 & 38,3 & 0,7 \\
 		& GA (pop. 50, gen. 200) & 1477,7 & 1691,7 $\pm$ 68,0 & 35,1 & 1,3 \\
@@ -212,8 +212,9 @@ oleh satu truk. Pada \textit{large}, batasnya bukan lagi berat (1589 dari 2400 p
 Gambar~\ref{fig:multitruck}), melainkan volume dan geometri: paket yang tersisa di luar
 umumnya berukuran besar dengan \textit{value} kecil. HC \textit{steepest} dan SA kini
 hanya 2--4\% dari batas atas. Urutan kinerja algoritma tetap sama seperti pada satu
-truk: SA dan HC \textit{steepest} unggul, sedangkan GA dan HC \textit{stochastic}
-tertinggal jauh karena alasan yang sama (Subbab~\ref{sec:ga-analisis}). Durasi SA
+truk: SA dan HC \textit{steepest} unggul, HC \textit{stochastic} sedikit di bawahnya
+(gap 7\%), sedangkan GA tertinggal jauh karena alasan yang sama
+(Subbab~\ref{sec:ga-analisis}). Durasi SA
 dan GA hanya naik sedikit, karena biaya per iterasi bergantung pada banyak paket di
 setiap truk, bukan pada banyak truk.
 
@@ -251,7 +252,8 @@ setiap truk, bukan pada banyak truk.
 Pada instans \textit{small}, SA mencapai 734 pada ketiga \textit{run}. Nilai ini sama
 dengan batas atas, sehingga hasil SA \emph{terbukti} merupakan optimum global.
 HC \textit{random-restart} tertinggal 2,9\% dan GA 4,9\%. Pada \textit{medium} dan
-\textit{large}, HC dan SA berada 5--10\% di bawah batas atas. Angka ini merupakan
+\textit{large}, HC dan SA berada 5--10\% di bawah batas atas (HC \textit{stochastic}
+12--18\%). Angka ini merupakan
 batas atas jarak, karena batas atas \textit{knapsack} mengabaikan geometri:
 kombinasi paket yang muat berdasarkan berat dan volume belum tentu dapat disusun
 tanpa celah, tanpa melayang, dan tanpa bertumpu pada paket \textit{fragile}.
@@ -267,10 +269,13 @@ dibahas pada Subbab~\ref{sec:ga-analisis}.
 	(Gambar~\ref{fig:hc-curve}), tetapi berhenti di \textit{local optimum} setelah
 	7--65 iterasi. Hasilnya sudah cukup baik karena setiap langkah memilih yang terbaik
 	dari ribuan tetangga.
-	\item \textbf{HC \textit{stochastic}} paling cepat (di bawah 1 detik), tetapi paling
-	buruk di antara varian HC (gap 16--48\%). Hanya 50 tetangga acak yang diperiksa,
-	sehingga pencarian berhenti begitu tidak ada satu pun dari 50 tetangga itu yang
-	lebih baik, padahal tetangga yang lebih baik masih ada.
+	\item \textbf{HC \textit{stochastic}} hasilnya 0,5--11\% di bawah \textit{steepest}
+	(gap 8--18\%) dengan waktu lebih singkat (0,1 detik di \textit{small}, 19 detik di
+	\textit{medium}, dan 10 menit di \textit{large}). Langkahnya acak di antara tetangga
+	yang lebih baik, bukan yang terbaik, sehingga setiap langkah naik lebih sedikit dan
+	puncak yang dicapai umumnya lebih rendah. Pada \textit{large}, dua dari tiga
+	\textit{run} berhenti karena \texttt{max\_iterations}=100, sehingga hasilnya masih
+	dapat naik dengan iterasi lebih banyak.
 	\item \textbf{HC \textit{sideways move}} tidak lebih baik daripada \textit{steepest}.
 	Semua \textit{run} berhenti karena batas \textit{sideways move}. Artinya banyak
 	\textit{plateau} (misalnya rotasi atau \textit{swap} paket di luar truk yang tidak
@@ -291,7 +296,12 @@ tetangga, yaitu $O(n^2)$ \textit{swap} ditambah $O(n^2)$ \textit{move} ke \texti
 point}. Setiap tetangga juga di-\textit{repair}, yang biayanya kuadratik terhadap banyak
 paket di truk. Karena itu waktunya tumbuh sangat cepat: sekitar 0,3 detik di
 \textit{small}, 50 detik di \textit{medium}, dan 10--16 menit di \textit{large}.
-\textit{Random-restart} sekitar 2--2,5 kali \textit{steepest}. Sebaliknya, SA dan GA hanya
+\textit{Random-restart} sekitar 2--2,5 kali \textit{steepest}. HC \textit{stochastic}
+hanya memeriksa seluruh tetangga ketika 50 tetangga acak tidak memberi perbaikan.
+Pada satu \textit{run} \textit{medium}, hal ini terjadi pada 16 dari 36 iterasi dan
+menghabiskan 98\% waktunya. Karena itu durasinya lebih singkat daripada
+\textit{steepest}, tetapi tumbuh dengan cara yang sama terhadap ukuran instans.
+Sebaliknya, SA dan GA hanya
 menilai satu tetangga per iterasi atau per anak, sehingga biayanya hampir linear
 terhadap banyak iterasi (Tabel~\ref{tab:sa-params}: 2.500 iterasi 1,7 detik, 40.000
 iterasi 37 detik). GA paling cepat karena total anak yang dievaluasi hanya
@@ -310,7 +320,8 @@ tidak berubah.
 SA pada \textit{small} memberikan hasil identik di ketiga \textit{run}. Pada
 \textit{medium} dan \textit{large}, HC \textit{random-restart} paling konsisten
 (simpangan baku 7 dan 46), disusul SA (21 dan 42--75) dan HC \textit{steepest}.
-HC \textit{stochastic} dan GA paling tidak konsisten. Simpangan baku GA mencapai
+HC \textit{stochastic} kurang konsisten (simpangan baku 54--123) karena langkahnya
+dipilih secara acak, dan GA paling tidak konsisten. Simpangan baku GA mencapai
 245 pada \textit{large}, karena hasilnya sangat bergantung pada individu awal terbaik
 yang kebetulan terbentuk.
 
