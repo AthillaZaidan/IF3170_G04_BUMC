@@ -7,10 +7,11 @@
     "schedule": "geometric",
     "p0": 0.01,
     "calibration_samples": 100,
-    "stuck_patience": 500
+    "stuck_patience": 500,
+    "ratio_bias": 0.0
   },
   "seed": 2757390660,
-  "duration_s": 70.2455340000015,
+  "duration_s": 21.56056520799757,
   "initial_state": [
     {
       "id": "P001",
